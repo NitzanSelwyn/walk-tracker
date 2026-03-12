@@ -1,0 +1,93 @@
+{
+  "app": {
+    "title": "מפת מעקב הליכה",
+    "tagline": "עקוב אחר כל רחוב שאתה הולך"
+  },
+  "nav": {
+    "home": "בית",
+    "map": "מפה",
+    "coverage": "כיסוי",
+    "feed": "עדכונים",
+    "leaderboard": "טבלת מובילים",
+    "community": "קהילה",
+    "profile": "פרופיל"
+  },
+  "auth": {
+    "signIn": "התחברות",
+    "signInWith": "התחבר עם {{provider}}",
+    "signOut": "התנתקות",
+    "signInToGetStarted": "התחבר כדי להתחיל לעקוב אחר ההליכות שלך"
+  },
+  "home": {
+    "welcome": "שלום, {{name}}!",
+    "noRoutes": "עדיין לא העלית מסלולים.",
+    "getStarted": "העלה את קובץ ה-GPX הראשון שלך כדי להתחיל!",
+    "goToMap": "למפה",
+    "totalDistance": "מרחק כולל",
+    "totalRoutes": "סה\"כ מסלולים",
+    "topCoverage": "כיסוי מוביל"
+  },
+  "map": {
+    "title": "המסלולים שלי",
+    "uploadGpx": "העלאת GPX",
+    "dropGpx": "גרור קובץ GPX לכאן או לחץ לבחירה",
+    "routes": "מסלולים",
+    "noRoutes": "אין מסלולים עדיין",
+    "distance": "{{km}} ק\"מ",
+    "delete": "מחק",
+    "rename": "שנה שם",
+    "confirmDelete": "למחוק מסלול זה?",
+    "preview": "תצוגה מקדימה",
+    "save": "שמור מסלול",
+    "cancel": "ביטול",
+    "visibility": "הצג/הסתר"
+  },
+  "coverage": {
+    "title": "כיסוי",
+    "selectArea": "בחר אזור",
+    "searchAreas": "חפש אזורים...",
+    "loading": "טוען רשת כבישים...",
+    "covered": "מכוסה",
+    "uncovered": "לא מכוסה",
+    "roads": "כבישים",
+    "distance": "מרחק",
+    "percentage": "{{percent}}%",
+    "recalculate": "חשב מחדש",
+    "noArea": "בחר אזור כדי לראות את הכיסוי שלך"
+  },
+  "feed": {
+    "title": "עדכונים",
+    "empty": "אין פעילות אחרונה. עקוב אחר אנשים כדי לראות את העדכונים שלהם!",
+    "routeUpload": "העלה את {{name}}",
+    "coverageMilestone": "הגיע ל-{{percent}}% ב{{area}}",
+    "areaStarted": "התחיל לעקוב אחר {{area}}"
+  },
+  "leaderboard": {
+    "title": "טבלת מובילים",
+    "rank": "#{{rank}}",
+    "you": "(את/ה)"
+  },
+  "community": {
+    "title": "מפת קהילה",
+    "walkers": "הולכים פעילים",
+    "totalCoverage": "כיסוי קהילתי"
+  },
+  "profile": {
+    "title": "פרופיל",
+    "edit": "ערוך פרופיל",
+    "followers": "עוקבים",
+    "following": "עוקב אחרי",
+    "follow": "עקוב",
+    "unfollow": "הפסק לעקוב",
+    "public": "ציבורי",
+    "private": "פרטי"
+  },
+  "common": {
+    "loading": "טוען...",
+    "error": "משהו השתבש",
+    "save": "שמור",
+    "cancel": "ביטול",
+    "km": "ק\"מ",
+    "language": "שפה"
+  }
+}

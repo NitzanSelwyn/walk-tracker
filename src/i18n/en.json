@@ -1,0 +1,93 @@
+{
+  "app": {
+    "title": "Walk Tracker Map",
+    "tagline": "Track every street you walk"
+  },
+  "nav": {
+    "home": "Home",
+    "map": "Map",
+    "coverage": "Coverage",
+    "feed": "Feed",
+    "leaderboard": "Leaderboard",
+    "community": "Community",
+    "profile": "Profile"
+  },
+  "auth": {
+    "signIn": "Sign In",
+    "signInWith": "Sign in with {{provider}}",
+    "signOut": "Sign Out",
+    "signInToGetStarted": "Sign in to start tracking your walks"
+  },
+  "home": {
+    "welcome": "Welcome, {{name}}!",
+    "noRoutes": "You haven't uploaded any routes yet.",
+    "getStarted": "Upload your first GPX file to get started!",
+    "goToMap": "Go to Map",
+    "totalDistance": "Total Distance",
+    "totalRoutes": "Total Routes",
+    "topCoverage": "Top Coverage"
+  },
+  "map": {
+    "title": "My Routes",
+    "uploadGpx": "Upload GPX",
+    "dropGpx": "Drop GPX file here or click to browse",
+    "routes": "Routes",
+    "noRoutes": "No routes yet",
+    "distance": "{{km}} km",
+    "delete": "Delete",
+    "rename": "Rename",
+    "confirmDelete": "Delete this route?",
+    "preview": "Preview",
+    "save": "Save Route",
+    "cancel": "Cancel",
+    "visibility": "Toggle visibility"
+  },
+  "coverage": {
+    "title": "Coverage",
+    "selectArea": "Select an area",
+    "searchAreas": "Search areas...",
+    "loading": "Loading road network...",
+    "covered": "Covered",
+    "uncovered": "Uncovered",
+    "roads": "Roads",
+    "distance": "Distance",
+    "percentage": "{{percent}}%",
+    "recalculate": "Recalculate",
+    "noArea": "Select an area to see your coverage"
+  },
+  "feed": {
+    "title": "Activity Feed",
+    "empty": "No recent activity. Follow people to see their updates!",
+    "routeUpload": "uploaded {{name}}",
+    "coverageMilestone": "reached {{percent}}% in {{area}}",
+    "areaStarted": "started tracking {{area}}"
+  },
+  "leaderboard": {
+    "title": "Leaderboard",
+    "rank": "#{{rank}}",
+    "you": "(you)"
+  },
+  "community": {
+    "title": "Community Map",
+    "walkers": "Active Walkers",
+    "totalCoverage": "Community Coverage"
+  },
+  "profile": {
+    "title": "Profile",
+    "edit": "Edit Profile",
+    "followers": "Followers",
+    "following": "Following",
+    "follow": "Follow",
+    "unfollow": "Unfollow",
+    "public": "Public",
+    "private": "Private"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "save": "Save",
+    "cancel": "Cancel",
+    "km": "km",
+    "language": "Language"
+  }
+}
