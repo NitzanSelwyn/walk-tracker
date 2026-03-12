@@ -129,7 +129,7 @@ export default function CoveragePage() {
               <>
                 <div className="border-t border-gray-100" />
                 <CoverageStats
-                  coverage={coverage}
+                  coverage={coverage ?? null}
                   onRecalculate={handleRecalculate}
                   calculating={calculating}
                 />

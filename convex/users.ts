@@ -69,12 +69,26 @@ export const updateProfile = mutation({
     if (args.isPublic !== undefined) updates.isPublic = args.isPublic;
 
     await ctx.db.patch(profile._id, updates);
+
+    // Cascade privacy setting to all user routes
+    if (args.isPublic !== undefined) {
+      const routes = await ctx.db
+        .query("routes")
+        .withIndex("by_userId", (q) => q.eq("userId", userId))
+        .collect();
+
+      for (const route of routes) {
+        await ctx.db.patch(route._id, { isPublic: args.isPublic });
+      }
+    }
   },
 });
 
 export const getProfile = query({
   args: { userId: v.id("users") },
   handler: async (ctx, args) => {
+    const viewerId = await getAuthUserId(ctx);
+
     const user = await ctx.db.get(args.userId);
     if (!user) return null;
 
@@ -83,6 +97,32 @@ export const getProfile = query({
       .withIndex("by_userId", (q) => q.eq("userId", args.userId))
       .unique();
 
-    return { ...user, profile };
+    // If profile is private and viewer is not the owner, check follow status
+    if (profile && !profile.isPublic && viewerId !== args.userId) {
+      let isFollower = false;
+      if (viewerId) {
+        const follow = await ctx.db
+          .query("follows")
+          .withIndex("by_pair", (q) =>
+            q.eq("followerId", viewerId).eq("followingId", args.userId),
+          )
+          .unique();
+        isFollower = !!follow;
+      }
+
+      if (!isFollower) {
+        return {
+          ...user,
+          profile: {
+            ...profile,
+            totalRoutes: 0,
+            totalDistanceKm: 0,
+          },
+          isLimited: true as const,
+        };
+      }
+    }
+
+    return { ...user, profile, isLimited: false as const };
   },
 });

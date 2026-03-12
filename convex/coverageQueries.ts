@@ -17,6 +17,29 @@ export const getUserCoverage = query({
   },
 });
 
+export const getUserCoverages = query({
+  args: { userId: v.id("users") },
+  handler: async (ctx, args) => {
+    const coverages = await ctx.db
+      .query("userCoverage")
+      .withIndex("by_userId_areaId", (q) => q.eq("userId", args.userId))
+      .collect();
+
+    const enriched = await Promise.all(
+      coverages.map(async (c) => {
+        const area = await ctx.db.get(c.areaId);
+        return {
+          ...c,
+          areaName: area?.name ?? "Unknown",
+          areaNameHe: area?.nameHe,
+        };
+      })
+    );
+
+    return enriched.sort((a, b) => b.coveragePercent - a.coveragePercent);
+  },
+});
+
 export const getCachedRoadNetwork = query({
   args: { areaId: v.id("areas") },
   handler: async (ctx, args) => {

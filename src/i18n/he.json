@@ -85,7 +85,11 @@
     "follow": "עקוב",
     "unfollow": "הפסק לעקוב",
     "public": "ציבורי",
-    "private": "פרטי"
+    "private": "פרטי",
+    "displayName": "שם תצוגה",
+    "bio": "ביו",
+    "privateNotice": "פרופיל זה פרטי. עקוב אחרי המשתמש כדי לראות את הפרופיל המלא.",
+    "privacyToggleHint": "שנה נראות פרופיל"
   },
   "common": {
     "loading": "טוען...",

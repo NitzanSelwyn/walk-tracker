@@ -8,26 +8,26 @@ export const getByArea = query({
       .query("userCoverage")
       .withIndex("by_areaId_coveragePercent", (q) => q.eq("areaId", args.areaId))
       .order("desc")
-      .take(50);
+      .take(200);
 
-    const enriched = await Promise.all(
-      coverages.map(async (coverage, index) => {
-        const user = await ctx.db.get(coverage.userId);
-        const profile = user
-          ? await ctx.db
-              .query("userProfiles")
-              .withIndex("by_userId", (q) => q.eq("userId", coverage.userId))
-              .unique()
-          : null;
+    const enriched = [];
+    for (const coverage of coverages) {
+      const profile = await ctx.db
+        .query("userProfiles")
+        .withIndex("by_userId", (q) => q.eq("userId", coverage.userId))
+        .unique();
 
-        return {
-          rank: index + 1,
-          ...coverage,
-          user: user ? { ...user, profile } : null,
-        };
-      })
-    );
+      if (profile && !profile.isPublic) continue;
 
-    return enriched;
+      const user = await ctx.db.get(coverage.userId);
+
+      enriched.push({
+        rank: enriched.length + 1,
+        ...coverage,
+        user: user ? { ...user, profile } : null,
+      });
+    }
+
+    return enriched.slice(0, 50);
   },
 });

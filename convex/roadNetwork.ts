@@ -3,6 +3,8 @@
 import { action } from "./_generated/server";
 import { v } from "convex/values";
 import { api, internal } from "./_generated/api";
+import type { Doc } from "./_generated/dataModel";
+import * as turf from "@turf/turf";
 
 export const fetchRoadNetwork = action({
   args: { areaId: v.id("areas") },
@@ -15,11 +17,13 @@ export const fetchRoadNetwork = action({
     roadCount: number;
   }> => {
     // Get area bounding box
-    const area = await ctx.runQuery(api.areas.get, { areaId: args.areaId });
+    const area: Doc<"areas"> | null = await ctx.runQuery(api.areas.get, {
+      areaId: args.areaId,
+    });
     if (!area) throw new Error("Area not found");
 
     // Check cache (30-day TTL)
-    const cached = await ctx.runQuery(
+    const cached: Doc<"roadNetworks"> | null = await ctx.runQuery(
       internal.roadNetworkHelpers.getCachedNetwork,
       { areaId: args.areaId }
     );
@@ -56,11 +60,14 @@ export const fetchRoadNetwork = action({
 
     const data = await response.json();
 
-    // Build node lookup
+    // Build node lookup — round coords to 5 decimal places (~1.1m accuracy)
     const nodes: Record<string, [number, number]> = {};
     for (const el of data.elements) {
       if (el.type === "node") {
-        nodes[el.id] = [el.lon, el.lat];
+        nodes[el.id] = [
+          Math.round(el.lon * 1e5) / 1e5,
+          Math.round(el.lat * 1e5) / 1e5,
+        ];
       }
     }
 
@@ -80,16 +87,21 @@ export const fetchRoadNetwork = action({
       for (let i = 1; i < coords.length; i++) {
         length += haversine(coords[i - 1], coords[i]);
       }
+      // Skip very short segments (< 5m) as noise
+      if (length < 0.005) continue;
       totalLengthKm += length;
+
+      // Build compact properties — omit empty name
+      const props: Record<string, unknown> = {
+        id: el.id,
+        highway: el.tags?.highway ?? "unknown",
+        lengthKm: Math.round(length * 1000) / 1000,
+      };
+      if (el.tags?.name) props.name = el.tags.name;
 
       features.push({
         type: "Feature" as const,
-        properties: {
-          id: el.id,
-          highway: el.tags?.highway ?? "unknown",
-          name: el.tags?.name ?? "",
-          lengthKm: length,
-        },
+        properties: props,
         geometry: {
           type: "LineString" as const,
           coordinates: coords,
@@ -97,10 +109,20 @@ export const fetchRoadNetwork = action({
       });
     }
 
-    const geojson = JSON.stringify({
+    // Simplify geometries if the collection is too large (> 800KB target)
+    let fc: GeoJSON.FeatureCollection = {
       type: "FeatureCollection",
-      features,
-    });
+      features: features as GeoJSON.Feature[],
+    };
+    let geojson = JSON.stringify(fc);
+
+    if (geojson.length > 800_000) {
+      fc = turf.simplify(fc, {
+        tolerance: 0.00005,
+        highQuality: true,
+      }) as GeoJSON.FeatureCollection;
+      geojson = JSON.stringify(fc);
+    }
 
     // Store in cache
     if (cached) {

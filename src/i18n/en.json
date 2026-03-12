@@ -85,7 +85,11 @@
     "follow": "Follow",
     "unfollow": "Unfollow",
     "public": "Public",
-    "private": "Private"
+    "private": "Private",
+    "displayName": "Display name",
+    "bio": "Bio",
+    "privateNotice": "This profile is private. Follow this user to see their full profile.",
+    "privacyToggleHint": "Toggle profile visibility"
   },
   "common": {
     "loading": "Loading...",

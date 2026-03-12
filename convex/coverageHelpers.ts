@@ -3,7 +3,7 @@ import { v } from "convex/values";
 
 export const getUserByToken = internalQuery({
   args: { tokenIdentifier: v.string() },
-  handler: async (ctx, args) => {
+  handler: async (ctx, _args) => {
     // Find user through auth accounts
     const users = await ctx.db.query("users").collect();
     for (const user of users) {

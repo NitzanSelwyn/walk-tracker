@@ -1,4 +1,5 @@
-import { useQuery } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import { api } from "../../convex/_generated/api";
@@ -6,14 +7,15 @@ import type { Id } from "../../convex/_generated/dataModel";
 import FollowButton from "../components/social/FollowButton";
 
 export default function ProfilePage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { userId: paramUserId } = useParams<{ userId: string }>();
 
   const currentUser = useQuery(api.users.currentUser);
-  const isOwnProfile = !paramUserId;
   const targetUserId = paramUserId
     ? (paramUserId as Id<"users">)
     : currentUser?._id;
+  const isOwnProfile =
+    !paramUserId || (currentUser && paramUserId === currentUser._id);
 
   const otherUser = useQuery(
     api.users.getProfile,
@@ -29,8 +31,24 @@ export default function ProfilePage() {
     targetUserId ? { userId: targetUserId } : "skip",
   );
 
+  const coverages = useQuery(
+    api.coverageQueries.getUserCoverages,
+    targetUserId ? { userId: targetUserId } : "skip",
+  );
+
+  const updateProfile = useMutation(api.users.updateProfile);
+
   const user = isOwnProfile ? currentUser : otherUser;
   const profile = user?.profile;
+  const isLimited =
+    !isOwnProfile &&
+    otherUser &&
+    "isLimited" in otherUser &&
+    otherUser.isLimited;
+
+  const [editing, setEditing] = useState(false);
+  const [editName, setEditName] = useState("");
+  const [editBio, setEditBio] = useState("");
 
   if (!user) {
     return (
@@ -39,6 +57,23 @@ export default function ProfilePage() {
       </div>
     );
   }
+
+  const startEdit = () => {
+    setEditName(profile?.displayName ?? user.name ?? "");
+    setEditBio(profile?.bio ?? "");
+    setEditing(true);
+  };
+
+  const saveEdit = async () => {
+    await updateProfile({ displayName: editName, bio: editBio });
+    setEditing(false);
+  };
+
+  const togglePrivacy = async () => {
+    await updateProfile({ isPublic: !profile?.isPublic });
+  };
+
+  const isHebrew = i18n.language === "he";
 
   return (
     <div className="mx-auto max-w-2xl p-6">
@@ -60,41 +95,154 @@ export default function ProfilePage() {
               </div>
             )}
             <div>
-              <h2 className="text-lg font-semibold text-gray-900">
-                {profile?.displayName ?? user.name}
-              </h2>
-              {user.email && (
-                <p className="text-sm text-gray-500">{user.email}</p>
-              )}
-              {profile?.bio && (
-                <p className="mt-1 text-sm text-gray-600">{profile.bio}</p>
+              {editing ? (
+                <div className="flex flex-col gap-2">
+                  <input
+                    type="text"
+                    value={editName}
+                    onChange={(e) => setEditName(e.target.value)}
+                    className="rounded border border-gray-300 px-2 py-1 text-lg font-semibold"
+                    placeholder={t("profile.displayName")}
+                  />
+                  <textarea
+                    value={editBio}
+                    onChange={(e) => setEditBio(e.target.value)}
+                    className="rounded border border-gray-300 px-2 py-1 text-sm"
+                    rows={2}
+                    placeholder={t("profile.bio")}
+                  />
+                  <div className="flex gap-2">
+                    <button
+                      onClick={saveEdit}
+                      className="rounded bg-emerald-500 px-3 py-1 text-sm text-white hover:bg-emerald-600"
+                    >
+                      {t("common.save")}
+                    </button>
+                    <button
+                      onClick={() => setEditing(false)}
+                      className="rounded border border-gray-300 px-3 py-1 text-sm text-gray-600 hover:bg-gray-50"
+                    >
+                      {t("common.cancel")}
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <h2 className="text-lg font-semibold text-gray-900">
+                    {profile?.displayName ?? user.name}
+                  </h2>
+                  {user.email && (
+                    <p className="text-sm text-gray-500">{user.email}</p>
+                  )}
+                  {profile?.bio && (
+                    <p className="mt-1 text-sm text-gray-600">{profile.bio}</p>
+                  )}
+                </>
               )}
             </div>
           </div>
-          {!isOwnProfile && targetUserId && (
-            <FollowButton userId={targetUserId} />
-          )}
+          <div className="flex items-center gap-2">
+            {isOwnProfile && !editing && (
+              <>
+                <button
+                  onClick={togglePrivacy}
+                  title={t("profile.privacyToggleHint")}
+                  className={`flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
+                    profile?.isPublic
+                      ? "bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
+                      : "bg-amber-50 text-amber-700 hover:bg-amber-100"
+                  }`}
+                >
+                  {profile?.isPublic ? (
+                    <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5a17.92 17.92 0 01-8.716-2.247m0 0A8.966 8.966 0 013 12c0-1.264.26-2.467.729-3.56" />
+                    </svg>
+                  ) : (
+                    <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+                    </svg>
+                  )}
+                  {profile?.isPublic ? t("profile.public") : t("profile.private")}
+                </button>
+                <button
+                  onClick={startEdit}
+                  className="rounded border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-50"
+                >
+                  {t("profile.edit")}
+                </button>
+              </>
+            )}
+            {!isOwnProfile && targetUserId && (
+              <FollowButton userId={targetUserId} />
+            )}
+          </div>
         </div>
 
-        {/* Stats */}
-        <div className="mt-6 grid grid-cols-4 gap-4 border-t border-gray-100 pt-6">
-          <StatBlock
-            value={String(profile?.totalRoutes ?? 0)}
-            label={t("home.totalRoutes")}
-          />
-          <StatBlock
-            value={`${(profile?.totalDistanceKm ?? 0).toFixed(1)}`}
-            label={t("common.km")}
-          />
-          <StatBlock
-            value={String(followerCount ?? 0)}
-            label={t("profile.followers")}
-          />
-          <StatBlock
-            value={String(followingCount ?? 0)}
-            label={t("profile.following")}
-          />
-        </div>
+        {/* Private profile notice */}
+        {isLimited && (
+          <div className="mt-4 rounded-md bg-amber-50 px-4 py-3 text-sm text-amber-800">
+            <div className="flex items-center gap-2">
+              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+              </svg>
+              {t("profile.privateNotice")}
+            </div>
+          </div>
+        )}
+
+        {/* Stats — hidden for limited profiles */}
+        {!isLimited && (
+          <div className="mt-6 grid grid-cols-4 gap-4 border-t border-gray-100 pt-6">
+            <StatBlock
+              value={String(profile?.totalRoutes ?? 0)}
+              label={t("home.totalRoutes")}
+            />
+            <StatBlock
+              value={`${(profile?.totalDistanceKm ?? 0).toFixed(1)}`}
+              label={t("common.km")}
+            />
+            <StatBlock
+              value={String(followerCount ?? 0)}
+              label={t("profile.followers")}
+            />
+            <StatBlock
+              value={String(followingCount ?? 0)}
+              label={t("profile.following")}
+            />
+          </div>
+        )}
+
+        {/* Coverage — shown for own profile or public profiles */}
+        {!isLimited && coverages && coverages.length > 0 && (
+          <div className="mt-6 border-t border-gray-100 pt-6">
+            <h3 className="mb-3 text-sm font-semibold text-gray-700">
+              {t("coverage.title")}
+            </h3>
+            <div className="space-y-2">
+              {coverages.map((c) => (
+                <div
+                  key={c._id}
+                  className="flex items-center justify-between rounded-md bg-gray-50 px-3 py-2"
+                >
+                  <span className="text-sm text-gray-800">
+                    {isHebrew && c.areaNameHe ? c.areaNameHe : c.areaName}
+                  </span>
+                  <div className="flex items-center gap-3">
+                    <div className="h-2 w-24 overflow-hidden rounded-full bg-gray-200">
+                      <div
+                        className="h-full rounded-full bg-emerald-500"
+                        style={{ width: `${Math.min(c.coveragePercent, 100)}%` }}
+                      />
+                    </div>
+                    <span className="min-w-[3rem] text-end text-sm font-medium text-gray-700">
+                      {c.coveragePercent.toFixed(1)}%
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

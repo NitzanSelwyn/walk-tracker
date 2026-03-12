@@ -1,5 +1,6 @@
 import { query } from "./_generated/server";
 import { v } from "convex/values";
+import type { Id } from "./_generated/dataModel";
 
 export const getAreaStats = query({
   args: { areaId: v.id("areas") },
@@ -21,18 +22,40 @@ export const getAreaStats = query({
       };
     }
 
-    // Aggregate stats
-    const totalRoadKm = coverages[0].totalLengthKm;
-    let totalCoveredKm = 0;
+    // Filter out private users
+    const publicCoverages = [];
     for (const c of coverages) {
+      const profile = await ctx.db
+        .query("userProfiles")
+        .withIndex("by_userId", (q) => q.eq("userId", c.userId))
+        .unique();
+      if (!profile || profile.isPublic) {
+        publicCoverages.push(c);
+      }
+    }
+
+    if (publicCoverages.length === 0) {
+      return {
+        walkerCount: 0,
+        communityCoveragePercent: 0,
+        totalCoveredKm: 0,
+        totalRoadKm: coverages[0].totalLengthKm,
+        topContributors: [],
+      };
+    }
+
+    // Aggregate stats
+    const totalRoadKm = publicCoverages[0].totalLengthKm;
+    let totalCoveredKm = 0;
+    for (const c of publicCoverages) {
       totalCoveredKm += c.coveredLengthKm;
     }
-    // Community coverage is capped at 100% since different users may cover the same roads
-    // We use max coverage as a rough proxy (union would require geo computation)
-    const maxCoverage = Math.max(...coverages.map((c) => c.coveragePercent));
+    const maxCoverage = Math.max(
+      ...publicCoverages.map((c) => c.coveragePercent),
+    );
 
     // Top 5 contributors
-    const sorted = coverages.sort(
+    const sorted = publicCoverages.sort(
       (a, b) => b.coveragePercent - a.coveragePercent,
     );
     const top5 = sorted.slice(0, 5);
@@ -57,7 +80,7 @@ export const getAreaStats = query({
     );
 
     return {
-      walkerCount: coverages.length,
+      walkerCount: publicCoverages.length,
       communityCoveragePercent: maxCoverage,
       totalCoveredKm: Math.min(totalCoveredKm, totalRoadKm),
       totalRoadKm,
@@ -84,14 +107,26 @@ export const getAllPublicRoutes = query({
 
     const userIds = coverages.map((c) => c.userId);
 
-    // Fetch routes for each user that overlap with this area's bounding box
+    // Build set of public user IDs
+    const publicUserIds = new Set<Id<"users">>();
+    for (const uid of userIds) {
+      const profile = await ctx.db
+        .query("userProfiles")
+        .withIndex("by_userId", (q) => q.eq("userId", uid))
+        .unique();
+      if (!profile || profile.isPublic) {
+        publicUserIds.add(uid);
+      }
+    }
+
+    // Fetch routes for each public user that overlap with this area's bounding box
     const allRoutes: Array<{
       userId: string;
       geojson: string;
       color: string;
     }> = [];
 
-    for (const userId of userIds) {
+    for (const userId of publicUserIds) {
       const routes = await ctx.db
         .query("routes")
         .withIndex("by_userId", (q) => q.eq("userId", userId))
@@ -99,7 +134,6 @@ export const getAllPublicRoutes = query({
 
       for (const route of routes) {
         if (!route.isPublic) continue;
-        // Check rough bounding box overlap
         const rbb = route.boundingBox;
         const overlaps =
           rbb.maxLat >= bb.minLat &&

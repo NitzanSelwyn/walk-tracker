@@ -3,6 +3,7 @@
 import { action } from "./_generated/server";
 import { v } from "convex/values";
 import { internal } from "./_generated/api";
+import type { Doc } from "./_generated/dataModel";
 import * as turf from "@turf/turf";
 
 export const calculateCoverage = action({
@@ -19,16 +20,17 @@ export const calculateCoverage = action({
     totalLengthKm: number;
   }> => {
     // Get road network
-    const network = await ctx.runQuery(
+    const network: Doc<"roadNetworks"> | null = await ctx.runQuery(
       internal.roadNetworkHelpers.getCachedNetwork,
       { areaId: args.areaId }
     );
     if (!network) throw new Error("Road network not loaded. Fetch it first.");
 
     // Get user routes
-    const routes = await ctx.runQuery(internal.coverageHelpers.getUserRoutes, {
-      userId: args.userId,
-    });
+    const routes: Doc<"routes">[] = await ctx.runQuery(
+      internal.coverageHelpers.getUserRoutes,
+      { userId: args.userId },
+    );
 
     if (routes.length === 0) {
       await ctx.runMutation(internal.coverageHelpers.storeCoverage, {

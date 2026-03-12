@@ -17,17 +17,30 @@ export const getFeed = query({
     // Include own activities
     followingIds.add(userId);
 
-    // Get recent activities (last 50)
+    // Get recent activities (last 200, then filter)
     const activities = await ctx.db
       .query("activities")
       .withIndex("by_createdAt")
       .order("desc")
       .take(200);
 
-    // Filter to followed users
-    const filtered = activities
-      .filter((a) => followingIds.has(a.userId))
-      .slice(0, 50);
+    // Filter to followed users, then exclude private users (except self)
+    const filtered = [];
+    for (const a of activities) {
+      if (!followingIds.has(a.userId)) continue;
+
+      // Own activities always visible
+      if (a.userId !== userId) {
+        const profile = await ctx.db
+          .query("userProfiles")
+          .withIndex("by_userId", (q) => q.eq("userId", a.userId))
+          .unique();
+        if (profile && !profile.isPublic) continue;
+      }
+
+      filtered.push(a);
+      if (filtered.length >= 50) break;
+    }
 
     // Enrich with user data
     const enriched = await Promise.all(
