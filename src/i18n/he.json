@@ -70,7 +70,12 @@
   "community": {
     "title": "מפת קהילה",
     "walkers": "הולכים פעילים",
-    "totalCoverage": "כיסוי קהילתי"
+    "totalCoverage": "כיסוי קהילתי",
+    "coveredKm": "מכוסה (ק\"מ)",
+    "totalKm": "סה\"כ כבישים (ק\"מ)",
+    "topContributors": "תורמים מובילים",
+    "routeCount": "{{count}} מסלולים במפה",
+    "selectArea": "בחר אזור כדי לראות פעילות קהילתית"
   },
   "profile": {
     "title": "פרופיל",

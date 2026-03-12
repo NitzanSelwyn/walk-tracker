@@ -9,6 +9,7 @@ import GpxPreview from "../components/gpx/GpxPreview";
 import RouteList from "../components/gpx/RouteList";
 import { useGpxParser } from "../hooks/useGpxParser";
 import { useFileUpload } from "../hooks/useFileUpload";
+import { useIsMobile } from "../hooks/useIsMobile";
 import type { LatLngBoundsExpression } from "leaflet";
 
 export default function MapPage() {
@@ -17,7 +18,8 @@ export default function MapPage() {
   const { parsedRoute, parsing, error, parseFile, reset } = useGpxParser();
   const { upload, uploading } = useFileUpload();
 
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const isMobile = useIsMobile();
+  const [sidebarOpen, setSidebarOpen] = useState(!isMobile);
   const [visibleIds, setVisibleIds] = useState<Set<string>>(new Set());
   const [flyToBounds, setFlyToBounds] = useState<
     LatLngBoundsExpression | undefined
@@ -98,7 +100,7 @@ export default function MapPage() {
     <div className="flex h-full">
       {/* Sidebar */}
       {sidebarOpen && (
-        <div className="flex w-80 shrink-0 flex-col border-e border-gray-200 bg-white">
+        <div className={`flex shrink-0 flex-col border-e border-gray-200 bg-white ${isMobile ? "absolute inset-y-0 start-0 z-[1001] w-72 shadow-xl" : "w-80"}`}>
           {/* Sidebar header */}
           <div className="flex items-center justify-between border-b border-gray-100 px-4 py-3">
             <h2 className="text-sm font-bold uppercase tracking-wide text-gray-800">

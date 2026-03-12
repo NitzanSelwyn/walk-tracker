@@ -33,6 +33,7 @@ export default function MapContainer({ flyToBounds, children }: Props) {
       zoom={DEFAULT_ZOOM}
       className="h-full w-full z-0"
       zoomControl={true}
+      preferCanvas={true}
     >
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'

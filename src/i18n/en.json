@@ -70,7 +70,12 @@
   "community": {
     "title": "Community Map",
     "walkers": "Active Walkers",
-    "totalCoverage": "Community Coverage"
+    "totalCoverage": "Community Coverage",
+    "coveredKm": "Covered (km)",
+    "totalKm": "Total Roads (km)",
+    "topContributors": "Top Contributors",
+    "routeCount": "{{count}} routes on map",
+    "selectArea": "Select an area to see community activity"
   },
   "profile": {
     "title": "Profile",

@@ -11,6 +11,7 @@
 import type * as activities from "../activities.js";
 import type * as areas from "../areas.js";
 import type * as auth from "../auth.js";
+import type * as community from "../community.js";
 import type * as coverage from "../coverage.js";
 import type * as coverageHelpers from "../coverageHelpers.js";
 import type * as coverageQueries from "../coverageQueries.js";
@@ -32,6 +33,7 @@ declare const fullApi: ApiFromModules<{
   activities: typeof activities;
   areas: typeof areas;
   auth: typeof auth;
+  community: typeof community;
   coverage: typeof coverage;
   coverageHelpers: typeof coverageHelpers;
   coverageQueries: typeof coverageQueries;
