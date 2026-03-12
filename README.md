@@ -1,5 +1,7 @@
 # Walk Tracker Map
 
+**Live at [walk-tracker-zeta.vercel.app](https://walk-tracker-zeta.vercel.app)**
+
 A community-driven app that helps people track every street they walk, share their progress, and encourage each other to explore their neighborhoods on foot.
 
 ## Why Walk Tracker Map?
