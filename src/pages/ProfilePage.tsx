@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from "convex/react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { api } from "../../convex/_generated/api";
 import type { Id } from "../../convex/_generated/dataModel";
 import FollowButton from "../components/social/FollowButton";
@@ -187,6 +187,21 @@ export default function ProfilePage() {
               </svg>
               {t("profile.privateNotice")}
             </div>
+          </div>
+        )}
+
+        {/* View Map link — shown for non-limited profiles */}
+        {!isLimited && targetUserId && (
+          <div className="mt-4 flex justify-center">
+            <Link
+              to={`/profile/${targetUserId}/map`}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-700 transition-colors hover:bg-emerald-100"
+            >
+              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 6.75V15m6-6v8.25m.503 3.498l4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 00-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0z" />
+              </svg>
+              {t("profile.viewMap")}
+            </Link>
           </div>
         )}
 

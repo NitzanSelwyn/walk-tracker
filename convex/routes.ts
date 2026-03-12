@@ -83,10 +83,40 @@ export const getUserRoutes = query({
 export const getRoutesByUserId = query({
   args: { userId: v.id("users") },
   handler: async (ctx, args) => {
-    return await ctx.db
+    const viewerId = await getAuthUserId(ctx);
+    const isOwner = viewerId === args.userId;
+
+    // If not the owner, check profile privacy
+    if (!isOwner) {
+      const profile = await ctx.db
+        .query("userProfiles")
+        .withIndex("by_userId", (q) => q.eq("userId", args.userId))
+        .unique();
+
+      if (profile && !profile.isPublic) {
+        // Private profile — only followers can see routes
+        let isFollower = false;
+        if (viewerId) {
+          const follow = await ctx.db
+            .query("follows")
+            .withIndex("by_pair", (q) =>
+              q.eq("followerId", viewerId).eq("followingId", args.userId),
+            )
+            .unique();
+          isFollower = !!follow;
+        }
+        if (!isFollower) return [];
+      }
+    }
+
+    const routes = await ctx.db
       .query("routes")
       .withIndex("by_userId", (q) => q.eq("userId", args.userId))
       .collect();
+
+    // Owner sees all; others see only public routes
+    if (isOwner) return routes;
+    return routes.filter((r) => r.isPublic);
   },
 });
 

@@ -89,7 +89,8 @@
     "displayName": "Display name",
     "bio": "Bio",
     "privateNotice": "This profile is private. Follow this user to see their full profile.",
-    "privacyToggleHint": "Toggle profile visibility"
+    "privacyToggleHint": "Toggle profile visibility",
+    "viewMap": "View Map"
   },
   "common": {
     "loading": "Loading...",
