@@ -6,7 +6,14 @@ import { api, internal } from "./_generated/api";
 
 export const fetchRoadNetwork = action({
   args: { areaId: v.id("areas") },
-  handler: async (ctx, args) => {
+  handler: async (
+    ctx,
+    args,
+  ): Promise<{
+    geojson: string;
+    totalLengthKm: number;
+    roadCount: number;
+  }> => {
     // Get area bounding box
     const area = await ctx.runQuery(api.areas.get, { areaId: args.areaId });
     if (!area) throw new Error("Area not found");
@@ -17,7 +24,11 @@ export const fetchRoadNetwork = action({
       { areaId: args.areaId }
     );
     if (cached && Date.now() - cached.fetchedAt < 30 * 24 * 60 * 60 * 1000) {
-      return cached;
+      return {
+        geojson: cached.geojson,
+        totalLengthKm: cached.totalLengthKm,
+        roadCount: cached.roadCount,
+      };
     }
 
     const { minLat, minLng, maxLat, maxLng } = area.boundingBox;

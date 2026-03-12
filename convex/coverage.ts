@@ -10,7 +10,14 @@ export const calculateCoverage = action({
     areaId: v.id("areas"),
     userId: v.id("users"),
   },
-  handler: async (ctx, args) => {
+  handler: async (
+    ctx,
+    args,
+  ): Promise<{
+    coveragePercent: number;
+    coveredLengthKm: number;
+    totalLengthKm: number;
+  }> => {
     // Get road network
     const network = await ctx.runQuery(
       internal.roadNetworkHelpers.getCachedNetwork,

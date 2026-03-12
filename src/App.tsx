@@ -1,5 +1,10 @@
 import { Routes, Route } from "react-router-dom";
-import { Authenticated, Unauthenticated, AuthLoading } from "convex/react";
+import {
+  Authenticated,
+  Unauthenticated,
+  AuthLoading,
+  useConvexAuth,
+} from "convex/react";
 import { useTranslation } from "react-i18next";
 import { useEffect } from "react";
 import Layout from "./components/layout/Layout";
@@ -14,6 +19,11 @@ import LoginPage from "./pages/LoginPage";
 
 function App() {
   const { i18n } = useTranslation();
+  const { isAuthenticated, isLoading } = useConvexAuth();
+
+  useEffect(() => {
+    console.log("[Auth]", { isAuthenticated, isLoading });
+  }, [isAuthenticated, isLoading]);
 
   useEffect(() => {
     document.documentElement.dir = i18n.language === "he" ? "rtl" : "ltr";
