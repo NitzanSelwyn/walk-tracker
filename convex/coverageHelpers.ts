@@ -14,6 +14,17 @@ export const getUserByToken = internalQuery({
   },
 });
 
+export const getUserRole = internalQuery({
+  args: { userId: v.id("users") },
+  handler: async (ctx, args) => {
+    const profile = await ctx.db
+      .query("userProfiles")
+      .withIndex("by_userId", (q) => q.eq("userId", args.userId))
+      .unique();
+    return profile?.role ?? "regular";
+  },
+});
+
 export const getUserRoutes = internalQuery({
   args: { userId: v.id("users") },
   handler: async (ctx, args) => {

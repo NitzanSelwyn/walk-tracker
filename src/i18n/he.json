@@ -134,6 +134,7 @@
     "NOT_FOUND_PROFILE": "הפרופיל לא נמצא",
     "NOT_FOUND_AREA": "האזור לא נמצא",
     "NOT_FOUND_ROAD_NETWORK": "רשת הכבישים טרם נטענה. יש לטעון אותה קודם.",
+    "AUTH_NOT_ADMIN": "נדרשת גישת מנהל",
     "VALIDATION_SELF_FOLLOW": "לא ניתן לעקוב אחרי עצמך",
     "EXTERNAL_OVERPASS_API": "שירות רשת הכבישים אינו זמין כרגע. נסה שוב מאוחר יותר."
   },

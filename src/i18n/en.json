@@ -134,6 +134,7 @@
     "NOT_FOUND_PROFILE": "Profile not found",
     "NOT_FOUND_AREA": "Area not found",
     "NOT_FOUND_ROAD_NETWORK": "Road network not loaded yet. Please fetch it first.",
+    "AUTH_NOT_ADMIN": "Admin access required",
     "VALIDATION_SELF_FOLLOW": "You cannot follow yourself",
     "EXTERNAL_OVERPASS_API": "Road network service is temporarily unavailable. Please try again later."
   },

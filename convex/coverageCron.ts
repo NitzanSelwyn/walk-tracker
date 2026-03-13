@@ -4,6 +4,7 @@ import { internalAction } from "./_generated/server";
 import { v } from "convex/values";
 import { internal } from "./_generated/api";
 import type { Doc } from "./_generated/dataModel";
+import { computeCoverage } from "./coverage";
 
 export const recalculateAllCoverage = internalAction({
   args: {},
@@ -43,7 +44,7 @@ export const recalculateAreaCoverage = internalAction({
     // Calculate coverage for each user in this area
     for (const userId of userIds) {
       try {
-        await ctx.runAction(internal.coverage.calculateCoverageInternal, {
+        await computeCoverage(ctx, {
           areaId: args.areaId,
           userId,
         });

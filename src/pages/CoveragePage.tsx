@@ -138,6 +138,7 @@ export default function CoveragePage() {
                   coverage={coverage ?? null}
                   onRecalculate={handleRecalculate}
                   calculating={calculating}
+                  isAdmin={user?.profile?.role === "admin"}
                 />
               </>
             )}

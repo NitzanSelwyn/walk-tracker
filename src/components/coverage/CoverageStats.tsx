@@ -13,12 +13,14 @@ interface Props {
   coverage: CoverageData | null;
   onRecalculate: () => void;
   calculating: boolean;
+  isAdmin?: boolean;
 }
 
 export default function CoverageStats({
   coverage,
   onRecalculate,
   calculating,
+  isAdmin,
 }: Props) {
   const { t } = useTranslation();
   const percent = coverage?.coveragePercent ?? 0;
@@ -59,7 +61,7 @@ export default function CoverageStats({
         </div>
       )}
 
-      {/* Last updated + recalculate */}
+      {/* Last updated + recalculate (admin only) */}
       <div className="mt-4 flex items-center justify-between text-xs text-gray-400">
         {coverage?.calculatedAt ? (
           <span>
@@ -70,20 +72,22 @@ export default function CoverageStats({
         ) : (
           <span>{t("coverage.pendingCalculation")}</span>
         )}
-        <button
-          onClick={onRecalculate}
-          disabled={calculating}
-          className="text-emerald-600 hover:text-emerald-700 disabled:opacity-50"
-        >
-          {calculating ? (
-            <span className="flex items-center gap-1">
-              <span className="h-3 w-3 animate-spin rounded-full border-2 border-emerald-600 border-t-transparent" />
-              {t("common.loading")}
-            </span>
-          ) : (
-            t("coverage.recalculate")
-          )}
-        </button>
+        {isAdmin && (
+          <button
+            onClick={onRecalculate}
+            disabled={calculating}
+            className="text-emerald-600 hover:text-emerald-700 disabled:opacity-50"
+          >
+            {calculating ? (
+              <span className="flex items-center gap-1">
+                <span className="h-3 w-3 animate-spin rounded-full border-2 border-emerald-600 border-t-transparent" />
+                {t("common.loading")}
+              </span>
+            ) : (
+              t("coverage.recalculate")
+            )}
+          </button>
+        )}
       </div>
     </div>
   );

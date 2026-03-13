@@ -29,12 +29,9 @@ export const fetchRoadNetwork = action({
       { areaId: args.areaId }
     );
     if (cached && Date.now() - cached.fetchedAt < 30 * 24 * 60 * 60 * 1000) {
-      const url = await ctx.runQuery(
-        internal.roadNetworkHelpers.getGeojsonUrl,
-        { storageId: cached.geojsonStorageId }
-      );
-      if (!url) throwAppError(ErrorCode.NOT_FOUND_ROAD_NETWORK);
-      const geojson = await (await fetch(url)).text();
+      const blob = await ctx.storage.get(cached.geojsonStorageId);
+      if (!blob) throwAppError(ErrorCode.NOT_FOUND_ROAD_NETWORK);
+      const geojson = await blob.text();
       return {
         geojson,
         totalLengthKm: cached.totalLengthKm,

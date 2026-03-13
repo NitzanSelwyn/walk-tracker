@@ -13,6 +13,7 @@ export default defineSchema({
     isPublic: v.boolean(),
     totalDistanceKm: v.number(),
     totalRoutes: v.number(),
+    role: v.optional(v.union(v.literal("regular"), v.literal("premium"), v.literal("admin"))),
   }).index("by_userId", ["userId"]),
 
   routes: defineTable({
