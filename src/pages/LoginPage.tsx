@@ -1,9 +1,22 @@
+import { useState } from "react";
 import { useAuthActions } from "@convex-dev/auth/react";
 import { useTranslation } from "react-i18next";
+
+const EXPORT_APPS = [
+  { id: "strava", key: "Strava", color: "#FC4C02", abbr: "S" },
+  { id: "garmin", key: "Garmin", color: "#007CC3", abbr: "G" },
+  { id: "komoot", key: "Komoot", color: "#6AA127", abbr: "K" },
+  { id: "alltrails", key: "Alltrails", color: "#428813", abbr: "A" },
+  { id: "polar", key: "Polar", color: "#D5001C", abbr: "P" },
+  { id: "suunto", key: "Suunto", color: "#1A1A1A", abbr: "Su" },
+  { id: "mapmyrun", key: "Mapmyrun", color: "#1D428A", abbr: "M" },
+  { id: "wikiloc", key: "Wikiloc", color: "#78B833", abbr: "W" },
+] as const;
 
 export default function LoginPage() {
   const { signIn } = useAuthActions();
   const { t, i18n } = useTranslation();
+  const [selectedApp, setSelectedApp] = useState<string>("strava");
 
   const toggleLanguage = () => {
     const next = i18n.language === "he" ? "en" : "he";
@@ -153,41 +166,98 @@ export default function LoginPage() {
         </div>
       </section>
 
-      {/* ── Strava Export Guide ── */}
+      {/* ── Export Guide ── */}
       <section className="border-t border-stone-200/60 bg-white px-6 py-20 sm:py-24">
-        <div className="mx-auto max-w-3xl">
+        <div className="mx-auto max-w-4xl">
           <div className="text-center">
-            <div className="mx-auto mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-orange-50">
-              <svg className="h-5 w-5 text-orange-500" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169" />
+            <div className="mx-auto mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-50">
+              <svg className="h-5 w-5 text-emerald-600" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
               </svg>
             </div>
             <h2 className="font-display text-3xl text-stone-900 sm:text-4xl">
-              {t("landing.stravaTitle")}
+              {t("landing.exportTitle")}
             </h2>
             <p className="mx-auto mt-3 max-w-xl text-base text-stone-500">
-              {t("landing.stravaSubtitle")}
+              {t("landing.exportSubtitle")}
             </p>
           </div>
 
-          <div className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {[1, 2, 3, 4].map((n) => (
-              <div
-                key={n}
-                className="relative rounded-xl border border-stone-150 bg-stone-50/80 p-5 transition-colors hover:border-emerald-200 hover:bg-emerald-50/40"
-              >
-                <span className="font-display text-3xl text-emerald-300">
-                  {n}
-                </span>
-                <h3 className="mt-2 text-sm font-semibold text-stone-800">
-                  {t(`landing.stravaStep${n}`)}
-                </h3>
-                <p className="mt-1 text-xs leading-relaxed text-stone-500">
-                  {t(`landing.stravaStep${n}Desc`)}
-                </p>
-              </div>
-            ))}
+          {/* App selector grid */}
+          <div className="mt-12 grid grid-cols-2 gap-2.5 sm:grid-cols-4">
+            {EXPORT_APPS.map((app) => {
+              const isSelected = selectedApp === app.id;
+              return (
+                <button
+                  key={app.id}
+                  onClick={() => setSelectedApp(app.id)}
+                  className={`group flex items-center gap-3 rounded-xl border p-3.5 text-start transition-all duration-200 ${
+                    isSelected
+                      ? "border-stone-300 bg-white shadow-md ring-1 ring-stone-200/50"
+                      : "border-stone-100 bg-stone-50/50 hover:border-stone-200 hover:bg-white hover:shadow-sm"
+                  }`}
+                >
+                  <div
+                    className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-xs font-bold text-white transition-transform duration-200 ${
+                      isSelected ? "scale-110" : "group-hover:scale-105"
+                    }`}
+                    style={{ backgroundColor: app.color }}
+                  >
+                    {app.abbr}
+                  </div>
+                  <span
+                    className={`truncate text-sm font-medium transition-colors ${
+                      isSelected ? "text-stone-900" : "text-stone-600"
+                    }`}
+                  >
+                    {t(`landing.export${app.key}`)}
+                  </span>
+                </button>
+              );
+            })}
           </div>
+
+          {/* Steps for selected app */}
+          {(() => {
+            const app = EXPORT_APPS.find((a) => a.id === selectedApp)!;
+            return (
+              <div
+                key={selectedApp}
+                className="mt-6 rounded-2xl border border-stone-150 bg-gradient-to-br from-stone-50/80 to-white p-6 sm:p-8"
+              >
+                <div className="mb-5 flex items-center gap-2.5">
+                  <div
+                    className="flex h-6 w-6 items-center justify-center rounded-md text-[10px] font-bold text-white"
+                    style={{ backgroundColor: app.color }}
+                  >
+                    {app.abbr}
+                  </div>
+                  <span className="text-sm font-semibold text-stone-800">
+                    {t(`landing.export${app.key}`)}
+                  </span>
+                  <span className="hidden text-sm text-stone-400 sm:inline">
+                    — {t(`landing.export${app.key}Desc`)}
+                  </span>
+                </div>
+
+                <div className="grid gap-4 sm:grid-cols-3">
+                  {[1, 2, 3].map((n) => (
+                    <div key={n} className="flex gap-3">
+                      <span
+                        className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white"
+                        style={{ backgroundColor: app.color }}
+                      >
+                        {n}
+                      </span>
+                      <p className="text-sm leading-relaxed text-stone-600">
+                        {t(`landing.export${app.key}Step${n}`)}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            );
+          })()}
         </div>
       </section>
 
