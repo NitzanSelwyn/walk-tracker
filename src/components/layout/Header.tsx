@@ -1,6 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import UserMenu from "../auth/UserMenu";
+import NotificationBell from "../social/NotificationBell";
 
 const navLinks = [
   { path: "/", key: "home" },
@@ -59,6 +60,7 @@ export default function Header() {
         >
           {i18n.language === "he" ? "EN" : "עב"}
         </button>
+        <NotificationBell />
         <UserMenu />
       </div>
     </header>

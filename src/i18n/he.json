@@ -25,7 +25,11 @@
     "goToMap": "למפה",
     "totalDistance": "מרחק כולל",
     "totalRoutes": "סה\"כ מסלולים",
-    "topCoverage": "כיסוי מוביל"
+    "topCoverage": "כיסוי מוביל",
+    "platformTitle": "נתוני הפלטפורמה",
+    "platformUsers": "סה\"כ משתמשים",
+    "platformRoutes": "סה\"כ מסלולים",
+    "platformDistance": "מרחק כולל"
   },
   "map": {
     "title": "המסלולים שלי",
@@ -95,12 +99,25 @@
     "private": "פרטי",
     "displayName": "שם תצוגה",
     "bio": "ביו",
-    "privateNotice": "פרופיל זה פרטי. עקוב אחרי המשתמש כדי לראות את הפרופיל המלא.",
+    "addFriend": "הוסף חבר",
+    "requestSent": "בקשה נשלחה",
+    "acceptFriend": "אשר",
+    "rejectFriend": "דחה",
+    "friends": "חברים",
+    "unfriend": "הסר חברות",
+    "privateNotice": "פרופיל זה פרטי. הוסף כחבר כדי לראות את הפרופיל המלא.",
     "privacyToggleHint": "שנה נראות פרופיל",
     "mapPublic": "מפה ציבורית",
     "mapPrivate": "מפה פרטית",
     "mapPublicToggleHint": "שנה אם מפת המסלולים שלך גלויה לכולם",
     "viewMap": "הצג מפה"
+  },
+  "notifications": {
+    "title": "התראות",
+    "empty": "אין התראות עדיין",
+    "markAllRead": "סמן הכל כנקרא",
+    "friendRequest": "שלח/ה לך בקשת חברות",
+    "friendAccepted": "אישר/ה את בקשת החברות שלך"
   },
   "landing": {
     "freeBadge": "100% חינם וקוד פתוח",
@@ -139,6 +156,11 @@
     "NOT_FOUND_ROAD_NETWORK": "רשת הכבישים טרם נטענה. יש לטעון אותה קודם.",
     "AUTH_NOT_ADMIN": "נדרשת גישת מנהל",
     "VALIDATION_SELF_FOLLOW": "לא ניתן לעקוב אחרי עצמך",
+    "VALIDATION_SELF_FRIEND": "לא ניתן להוסיף את עצמך כחבר",
+    "NOT_FOUND_FRIENDSHIP": "בקשת חברות לא נמצאה",
+    "FRIENDSHIP_ALREADY_EXISTS": "אתם כבר חברים",
+    "FRIENDSHIP_NOT_PENDING": "בקשת חברות זו כבר לא ממתינה",
+    "FRIENDSHIP_NOT_RECEIVER": "לא ניתן להגיב לבקשה זו",
     "EXTERNAL_OVERPASS_API": "שירות רשת הכבישים אינו זמין כרגע. נסה שוב מאוחר יותר."
   },
   "success": {
@@ -148,7 +170,11 @@
     "profileUpdated": "הפרופיל עודכן",
     "coverageCalculated": "הכיסוי חושב",
     "followed": "עוקב",
-    "unfollowed": "הפסקת מעקב"
+    "unfollowed": "הפסקת מעקב",
+    "friendRequestSent": "בקשת חברות נשלחה",
+    "friendRequestAccepted": "בקשת חברות אושרה",
+    "friendRequestRejected": "בקשת חברות נדחתה",
+    "unfriended": "החברות הוסרה"
   },
   "common": {
     "loading": "טוען...",

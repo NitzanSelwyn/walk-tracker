@@ -1,5 +1,6 @@
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { query } from "./_generated/server";
+import { areFriends } from "./friendHelpers";
 
 export const getFeed = query({
   args: {},
@@ -35,7 +36,11 @@ export const getFeed = query({
           .query("userProfiles")
           .withIndex("by_userId", (q) => q.eq("userId", a.userId))
           .unique();
-        if (profile && !profile.isPublic) continue;
+        // Skip private profiles unless viewer is friends with the author
+        if (profile && !profile.isPublic) {
+          const isFriend = await areFriends(ctx, userId, a.userId);
+          if (!isFriend) continue;
+        }
       }
 
       filtered.push(a);

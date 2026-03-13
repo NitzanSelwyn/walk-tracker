@@ -5,6 +5,7 @@ import { useParams, Link } from "react-router-dom";
 import { api } from "../../convex/_generated/api";
 import type { Id } from "../../convex/_generated/dataModel";
 import FollowButton from "../components/social/FollowButton";
+import FriendButton from "../components/social/FriendButton";
 import { handleMutationError, showSuccessToast } from "../lib/errorHandling";
 
 export default function ProfilePage() {
@@ -29,6 +30,10 @@ export default function ProfilePage() {
   );
   const followingCount = useQuery(
     api.follows.getFollowingCount,
+    targetUserId ? { userId: targetUserId } : "skip",
+  );
+  const friendCount = useQuery(
+    api.friends.getFriendCount,
     targetUserId ? { userId: targetUserId } : "skip",
   );
 
@@ -207,7 +212,10 @@ export default function ProfilePage() {
               </>
             )}
             {!isOwnProfile && targetUserId && (
-              <FollowButton userId={targetUserId} />
+              <div className="flex items-center gap-2">
+                <FriendButton userId={targetUserId} />
+                <FollowButton userId={targetUserId} />
+              </div>
             )}
           </div>
         </div>
@@ -241,7 +249,7 @@ export default function ProfilePage() {
 
         {/* Stats — hidden for limited profiles */}
         {!isLimited && (
-          <div className="mt-6 grid grid-cols-4 gap-4 border-t border-gray-100 pt-6">
+          <div className="mt-6 grid grid-cols-5 gap-4 border-t border-gray-100 pt-6">
             <StatBlock
               value={String(profile?.totalRoutes ?? 0)}
               label={t("home.totalRoutes")}
@@ -249,6 +257,10 @@ export default function ProfilePage() {
             <StatBlock
               value={`${(profile?.totalDistanceKm ?? 0).toFixed(1)}`}
               label={t("common.km")}
+            />
+            <StatBlock
+              value={String(friendCount ?? 0)}
+              label={t("profile.friends")}
             />
             <StatBlock
               value={String(followerCount ?? 0)}

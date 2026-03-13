@@ -25,7 +25,11 @@
     "goToMap": "Go to Map",
     "totalDistance": "Total Distance",
     "totalRoutes": "Total Routes",
-    "topCoverage": "Top Coverage"
+    "topCoverage": "Top Coverage",
+    "platformTitle": "Platform Stats",
+    "platformUsers": "Total Users",
+    "platformRoutes": "Total Routes",
+    "platformDistance": "Total Distance"
   },
   "map": {
     "title": "My Routes",
@@ -95,12 +99,25 @@
     "private": "Private",
     "displayName": "Display name",
     "bio": "Bio",
-    "privateNotice": "This profile is private. Follow this user to see their full profile.",
+    "addFriend": "Add Friend",
+    "requestSent": "Request Sent",
+    "acceptFriend": "Accept",
+    "rejectFriend": "Reject",
+    "friends": "Friends",
+    "unfriend": "Unfriend",
+    "privateNotice": "This profile is private. Add as a friend to see their full profile.",
     "privacyToggleHint": "Toggle profile visibility",
     "mapPublic": "Public Map",
     "mapPrivate": "Private Map",
     "mapPublicToggleHint": "Toggle whether your route map is publicly viewable",
     "viewMap": "View Map"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "empty": "No notifications yet",
+    "markAllRead": "Mark all as read",
+    "friendRequest": "sent you a friend request",
+    "friendAccepted": "accepted your friend request"
   },
   "landing": {
     "freeBadge": "100% Free & Open Source",
@@ -139,6 +156,11 @@
     "NOT_FOUND_ROAD_NETWORK": "Road network not loaded yet. Please fetch it first.",
     "AUTH_NOT_ADMIN": "Admin access required",
     "VALIDATION_SELF_FOLLOW": "You cannot follow yourself",
+    "VALIDATION_SELF_FRIEND": "You cannot add yourself as a friend",
+    "NOT_FOUND_FRIENDSHIP": "Friend request not found",
+    "FRIENDSHIP_ALREADY_EXISTS": "You are already friends",
+    "FRIENDSHIP_NOT_PENDING": "This friend request is no longer pending",
+    "FRIENDSHIP_NOT_RECEIVER": "You cannot respond to this request",
     "EXTERNAL_OVERPASS_API": "Road network service is temporarily unavailable. Please try again later."
   },
   "success": {
@@ -148,7 +170,11 @@
     "profileUpdated": "Profile updated",
     "coverageCalculated": "Coverage calculated",
     "followed": "Following",
-    "unfollowed": "Unfollowed"
+    "unfollowed": "Unfollowed",
+    "friendRequestSent": "Friend request sent",
+    "friendRequestAccepted": "Friend request accepted",
+    "friendRequestRejected": "Friend request rejected",
+    "unfriended": "Unfriended"
   },
   "common": {
     "loading": "Loading...",

@@ -2,6 +2,7 @@ import { getAuthUserId } from "@convex-dev/auth/server";
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 import { ErrorCode, throwAppError } from "./errorCodes";
+import { areFriends } from "./friendHelpers";
 
 export const generateUploadUrl = mutation({
   args: {},
@@ -110,19 +111,10 @@ export const getRoutesByUserId = query({
         .collect();
     }
 
-    // Private profile → only followers can see routes
+    // Private profile → only friends can see routes
     if (profile && !profile.isPublic) {
-      let isFollower = false;
-      if (viewerId) {
-        const follow = await ctx.db
-          .query("follows")
-          .withIndex("by_pair", (q) =>
-            q.eq("followerId", viewerId).eq("followingId", args.userId),
-          )
-          .unique();
-        isFollower = !!follow;
-      }
-      if (!isFollower) return [];
+      const isFriend = viewerId ? await areFriends(ctx, viewerId, args.userId) : false;
+      if (!isFriend) return [];
     }
 
     const routes = await ctx.db

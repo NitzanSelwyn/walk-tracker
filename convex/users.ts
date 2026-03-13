@@ -2,6 +2,7 @@ import { getAuthUserId } from "@convex-dev/auth/server";
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 import { ErrorCode, throwAppError } from "./errorCodes";
+import { areFriends } from "./friendHelpers";
 
 export const currentUser = query({
   args: {},
@@ -101,20 +102,11 @@ export const getProfile = query({
       .withIndex("by_userId", (q) => q.eq("userId", args.userId))
       .unique();
 
-    // If profile is private and viewer is not the owner, check follow status
+    // If profile is private and viewer is not the owner, check friendship
     if (profile && !profile.isPublic && viewerId !== args.userId) {
-      let isFollower = false;
-      if (viewerId) {
-        const follow = await ctx.db
-          .query("follows")
-          .withIndex("by_pair", (q) =>
-            q.eq("followerId", viewerId).eq("followingId", args.userId),
-          )
-          .unique();
-        isFollower = !!follow;
-      }
+      const isFriend = viewerId ? await areFriends(ctx, viewerId, args.userId) : false;
 
-      if (!isFollower) {
+      if (!isFriend) {
         return {
           ...user,
           profile: {

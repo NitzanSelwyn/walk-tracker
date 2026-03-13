@@ -111,11 +111,33 @@ export default defineSchema({
     calculatedAt: v.number(),
   }).index("by_areaId", ["areaId"]),
 
+  platformStats: defineTable({
+    totalUsers: v.number(),
+    totalRoutes: v.number(),
+    totalDistanceKm: v.number(),
+    calculatedAt: v.number(),
+  }),
+
+  friendships: defineTable({
+    requesterId: v.id("users"),
+    receiverId: v.id("users"),
+    status: v.union(v.literal("pending"), v.literal("accepted"), v.literal("rejected")),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_requesterId", ["requesterId"])
+    .index("by_receiverId", ["receiverId"])
+    .index("by_pair", ["requesterId", "receiverId"])
+    .index("by_receiverId_status", ["receiverId", "status"])
+    .index("by_requesterId_status", ["requesterId", "status"]),
+
   notifications: defineTable({
     userId: v.id("users"),
     type: v.string(),
     message: v.string(),
     read: v.boolean(),
+    relatedId: v.optional(v.string()),
+    senderId: v.optional(v.id("users")),
     createdAt: v.number(),
   })
     .index("by_userId", ["userId"])

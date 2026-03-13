@@ -11,4 +11,12 @@ crons.cron(
   {},
 );
 
+// Daily platform stats computation at 2:05 AM UTC (after coverage recalc)
+crons.cron(
+  "compute platform stats",
+  "5 2 * * *",
+  internal.platformStatsCron.computePlatformStats,
+  {},
+);
+
 export default crons;
