@@ -84,6 +84,15 @@ export default function ProfilePage() {
     }
   };
 
+  const toggleMapPublic = async () => {
+    try {
+      await updateProfile({ isMapPublic: !profile?.isMapPublic });
+      showSuccessToast(t("success.profileUpdated"));
+    } catch (err) {
+      handleMutationError(err, t);
+    }
+  };
+
   const isHebrew = i18n.language === "he";
 
   return (
@@ -176,6 +185,20 @@ export default function ProfilePage() {
                   {profile?.isPublic ? t("profile.public") : t("profile.private")}
                 </button>
                 <button
+                  onClick={toggleMapPublic}
+                  title={t("profile.mapPublicToggleHint")}
+                  className={`flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
+                    profile?.isMapPublic
+                      ? "bg-blue-50 text-blue-700 hover:bg-blue-100"
+                      : "bg-gray-50 text-gray-500 hover:bg-gray-100"
+                  }`}
+                >
+                  <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 6.75V15m6-6v8.25m.503 3.498l4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 00-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0z" />
+                  </svg>
+                  {profile?.isMapPublic ? t("profile.mapPublic") : t("profile.mapPrivate")}
+                </button>
+                <button
                   onClick={startEdit}
                   className="rounded border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-50"
                 >
@@ -201,8 +224,8 @@ export default function ProfilePage() {
           </div>
         )}
 
-        {/* View Map link — shown for non-limited profiles */}
-        {!isLimited && targetUserId && (
+        {/* View Map link — shown for non-limited profiles or when map is public */}
+        {(!isLimited || otherUser?.profile?.isMapPublic) && targetUserId && (
           <div className="mt-4 flex justify-center">
             <Link
               to={`/profile/${targetUserId}/map`}

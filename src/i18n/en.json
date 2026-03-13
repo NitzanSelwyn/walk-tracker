@@ -97,6 +97,9 @@
     "bio": "Bio",
     "privateNotice": "This profile is private. Follow this user to see their full profile.",
     "privacyToggleHint": "Toggle profile visibility",
+    "mapPublic": "Public Map",
+    "mapPrivate": "Private Map",
+    "mapPublicToggleHint": "Toggle whether your route map is publicly viewable",
     "viewMap": "View Map"
   },
   "landing": {

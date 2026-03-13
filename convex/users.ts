@@ -41,6 +41,7 @@ export const ensureProfile = mutation({
       userId,
       displayName,
       isPublic: true,
+      isMapPublic: false,
       totalDistanceKm: 0,
       totalRoutes: 0,
     });
@@ -52,6 +53,7 @@ export const updateProfile = mutation({
     displayName: v.optional(v.string()),
     bio: v.optional(v.string()),
     isPublic: v.optional(v.boolean()),
+    isMapPublic: v.optional(v.boolean()),
   },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
@@ -68,6 +70,7 @@ export const updateProfile = mutation({
     if (args.displayName !== undefined) updates.displayName = args.displayName;
     if (args.bio !== undefined) updates.bio = args.bio;
     if (args.isPublic !== undefined) updates.isPublic = args.isPublic;
+    if (args.isMapPublic !== undefined) updates.isMapPublic = args.isMapPublic;
 
     await ctx.db.patch(profile._id, updates);
 

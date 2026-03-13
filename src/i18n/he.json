@@ -97,6 +97,9 @@
     "bio": "ביו",
     "privateNotice": "פרופיל זה פרטי. עקוב אחרי המשתמש כדי לראות את הפרופיל המלא.",
     "privacyToggleHint": "שנה נראות פרופיל",
+    "mapPublic": "מפה ציבורית",
+    "mapPrivate": "מפה פרטית",
+    "mapPublicToggleHint": "שנה אם מפת המסלולים שלך גלויה לכולם",
     "viewMap": "הצג מפה"
   },
   "landing": {

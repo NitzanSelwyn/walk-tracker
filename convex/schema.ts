@@ -11,6 +11,7 @@ export default defineSchema({
     bio: v.optional(v.string()),
     avatarUrl: v.optional(v.string()),
     isPublic: v.boolean(),
+    isMapPublic: v.optional(v.boolean()),
     totalDistanceKm: v.number(),
     totalRoutes: v.number(),
     role: v.optional(v.union(v.literal("regular"), v.literal("premium"), v.literal("admin"))),

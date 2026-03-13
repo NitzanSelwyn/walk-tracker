@@ -89,27 +89,40 @@ export const getRoutesByUserId = query({
     const viewerId = await getAuthUserId(ctx);
     const isOwner = viewerId === args.userId;
 
-    // If not the owner, check profile privacy
-    if (!isOwner) {
-      const profile = await ctx.db
-        .query("userProfiles")
+    // Owner sees all routes
+    if (isOwner) {
+      return await ctx.db
+        .query("routes")
         .withIndex("by_userId", (q) => q.eq("userId", args.userId))
-        .unique();
+        .collect();
+    }
 
-      if (profile && !profile.isPublic) {
-        // Private profile — only followers can see routes
-        let isFollower = false;
-        if (viewerId) {
-          const follow = await ctx.db
-            .query("follows")
-            .withIndex("by_pair", (q) =>
-              q.eq("followerId", viewerId).eq("followingId", args.userId),
-            )
-            .unique();
-          isFollower = !!follow;
-        }
-        if (!isFollower) return [];
+    const profile = await ctx.db
+      .query("userProfiles")
+      .withIndex("by_userId", (q) => q.eq("userId", args.userId))
+      .unique();
+
+    // Public map → return ALL routes regardless of profile/route privacy
+    if (profile?.isMapPublic) {
+      return await ctx.db
+        .query("routes")
+        .withIndex("by_userId", (q) => q.eq("userId", args.userId))
+        .collect();
+    }
+
+    // Private profile → only followers can see routes
+    if (profile && !profile.isPublic) {
+      let isFollower = false;
+      if (viewerId) {
+        const follow = await ctx.db
+          .query("follows")
+          .withIndex("by_pair", (q) =>
+            q.eq("followerId", viewerId).eq("followingId", args.userId),
+          )
+          .unique();
+        isFollower = !!follow;
       }
+      if (!isFollower) return [];
     }
 
     const routes = await ctx.db
@@ -117,8 +130,6 @@ export const getRoutesByUserId = query({
       .withIndex("by_userId", (q) => q.eq("userId", args.userId))
       .collect();
 
-    // Owner sees all; others see only public routes
-    if (isOwner) return routes;
     return routes.filter((r) => r.isPublic);
   },
 });
