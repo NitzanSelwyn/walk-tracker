@@ -36,6 +36,7 @@ export function useFileUpload() {
           color: generateRouteColor(),
           routeType: routeType ?? "walk",
           startedAt: parsedRoute.startedAt,
+          avgSpeedKmh: parsedRoute.avgSpeedKmh,
         });
         showSuccessToast(t("success.routeUploaded"));
       } catch (err) {

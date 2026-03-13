@@ -38,6 +38,7 @@
     "routes": "מסלולים",
     "noRoutes": "אין מסלולים עדיין",
     "distance": "{{km}} ק\"מ",
+    "speed": "{{speed}} קמ\"ש",
     "delete": "מחק",
     "rename": "שנה שם",
     "confirmDelete": "למחוק מסלול זה?",

@@ -33,6 +33,7 @@ export default defineSchema({
     routeType: v.optional(v.string()),
     isPublic: v.boolean(),
     startedAt: v.optional(v.number()),
+    avgSpeedKmh: v.optional(v.number()),
   })
     .index("by_userId", ["userId"])
     .index("by_userId_startedAt", ["userId", "startedAt"]),

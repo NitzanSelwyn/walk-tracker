@@ -12,6 +12,7 @@ interface Route {
   color: string;
   routeType?: string;
   startedAt?: number;
+  avgSpeedKmh?: number;
   boundingBox: {
     minLat: number;
     maxLat: number;
@@ -124,6 +125,12 @@ export default function RouteList({
             <span className="flex items-center gap-1">
               {(route.routeType ?? "walk") === "bike" ? <SmallBikeIcon /> : <SmallWalkIcon />}
               {t("map.distance", { km: route.distanceKm.toFixed(1) })}
+              {route.avgSpeedKmh != null && (
+                <>
+                  <span className="text-gray-300">·</span>
+                  {t("map.speed", { speed: route.avgSpeedKmh.toFixed(1) })}
+                </>
+              )}
             </span>
             <span>
               {route.startedAt

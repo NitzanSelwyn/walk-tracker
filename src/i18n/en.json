@@ -38,6 +38,7 @@
     "routes": "Routes",
     "noRoutes": "No routes yet",
     "distance": "{{km}} km",
+    "speed": "{{speed}} km/h",
     "delete": "Delete",
     "rename": "Rename",
     "confirmDelete": "Delete this route?",

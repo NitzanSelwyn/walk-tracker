@@ -8,7 +8,7 @@ import MapContainer from "../components/map/MapContainer";
 import RoadNetworkLayer from "../components/map/RoadNetworkLayer";
 import AreaPicker from "../components/coverage/AreaPicker";
 import CoverageStats from "../components/coverage/CoverageStats";
-import { useCoveredRoadIds } from "../hooks/useCoverage";
+import { useCoveredSegments } from "../hooks/useCoverage";
 import { useIsMobile } from "../hooks/useIsMobile";
 import type { LatLngBoundsExpression } from "leaflet";
 
@@ -66,8 +66,8 @@ export default function CoveragePage() {
     return () => { cancelled = true; };
   }, [roadNetwork?.geojsonUrl]);
 
-  // Coverage visualization (grid-based spatial index)
-  const coveredRoadIds = useCoveredRoadIds(geojsonString, routes);
+  // Coverage visualization (segment-level grid-based spatial index)
+  const coveredSegments = useCoveredSegments(geojsonString, routes);
 
   // Fly to area bounds when selected
   const selectedArea = areas.find((a) => a._id === selectedAreaId);
@@ -168,7 +168,7 @@ export default function CoveragePage() {
           {geojsonString && (
             <RoadNetworkLayer
               roadNetworkGeojson={geojsonString}
-              coveredRoadIds={coveredRoadIds}
+              coveredSegments={coveredSegments}
             />
           )}
         </MapContainer>

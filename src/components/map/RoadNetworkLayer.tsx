@@ -4,21 +4,22 @@ import L from "leaflet";
 
 interface Props {
   roadNetworkGeojson: string;
-  coveredRoadIds: Set<number>;
+  coveredSegments: GeoJSON.FeatureCollection | null;
 }
 
 export default function RoadNetworkLayer({
   roadNetworkGeojson,
-  coveredRoadIds,
+  coveredSegments,
 }: Props) {
   const map = useMap();
-  const layerRef = useRef<L.GeoJSON | null>(null);
+  const baseLayerRef = useRef<L.GeoJSON | null>(null);
+  const coverageLayerRef = useRef<L.GeoJSON | null>(null);
 
+  // Base layer: all roads in gray
   useEffect(() => {
-    // Remove previous layer
-    if (layerRef.current) {
-      map.removeLayer(layerRef.current);
-      layerRef.current = null;
+    if (baseLayerRef.current) {
+      map.removeLayer(baseLayerRef.current);
+      baseLayerRef.current = null;
     }
 
     let geojson: GeoJSON.FeatureCollection;
@@ -29,12 +30,7 @@ export default function RoadNetworkLayer({
     }
 
     const layer = L.geoJSON(geojson, {
-      style: (feature) => {
-        const isCovered = coveredRoadIds.has(feature?.properties?.id);
-        return isCovered
-          ? { color: "#22c55e", weight: 3, opacity: 0.9 }
-          : { color: "#9ca3af", weight: 1, opacity: 0.3 };
-      },
+      style: () => ({ color: "#9ca3af", weight: 1, opacity: 0.3 }),
       onEachFeature: (feature, featureLayer) => {
         if (feature.properties?.name) {
           featureLayer.bindPopup(feature.properties.name);
@@ -43,15 +39,40 @@ export default function RoadNetworkLayer({
     });
 
     layer.addTo(map);
-    layerRef.current = layer;
+    baseLayerRef.current = layer;
 
     return () => {
-      if (layerRef.current) {
-        map.removeLayer(layerRef.current);
-        layerRef.current = null;
+      if (baseLayerRef.current) {
+        map.removeLayer(baseLayerRef.current);
+        baseLayerRef.current = null;
       }
     };
-  }, [map, roadNetworkGeojson, coveredRoadIds]);
+  }, [map, roadNetworkGeojson]);
+
+  // Coverage overlay: covered segments in green
+  useEffect(() => {
+    if (coverageLayerRef.current) {
+      map.removeLayer(coverageLayerRef.current);
+      coverageLayerRef.current = null;
+    }
+
+    if (!coveredSegments || coveredSegments.features.length === 0) return;
+
+    const layer = L.geoJSON(coveredSegments, {
+      style: () => ({ color: "#22c55e", weight: 3, opacity: 0.9 }),
+      interactive: false,
+    });
+
+    layer.addTo(map);
+    coverageLayerRef.current = layer;
+
+    return () => {
+      if (coverageLayerRef.current) {
+        map.removeLayer(coverageLayerRef.current);
+        coverageLayerRef.current = null;
+      }
+    };
+  }, [map, coveredSegments]);
 
   return null;
 }

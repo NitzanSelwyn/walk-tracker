@@ -15,6 +15,7 @@ export interface ParsedRoute {
   distanceKm: number;
   boundingBox: BoundingBox;
   startedAt: number | undefined;
+  avgSpeedKmh: number | undefined;
 }
 
 const ROUTE_COLORS = [
@@ -66,8 +67,9 @@ export function parseGpx(gpxText: string): ParsedRoute {
 
   const name = extractName(geojson, doc);
   const startedAt = extractStartTime(geojson);
+  const avgSpeedKmh = calculateAvgSpeed(geojson, distanceKm);
 
-  return { geojson, name, distanceKm, boundingBox, startedAt };
+  return { geojson, name, distanceKm, boundingBox, startedAt, avgSpeedKmh };
 }
 
 function calculateTotalDistance(geojson: FeatureCollection): number {
@@ -108,5 +110,28 @@ function extractStartTime(geojson: FeatureCollection): number | undefined {
       if (!isNaN(ts)) return ts;
     }
   }
+  return undefined;
+}
+
+function calculateAvgSpeed(
+  geojson: FeatureCollection,
+  distanceKm: number,
+): number | undefined {
+  if (distanceKm <= 0) return undefined;
+
+  for (const feature of geojson.features) {
+    const times = feature.properties?.coordTimes;
+    if (!Array.isArray(times) || times.length < 2) continue;
+
+    const first = new Date(times[0]).getTime();
+    const last = new Date(times[times.length - 1]).getTime();
+    if (isNaN(first) || isNaN(last)) continue;
+
+    const durationHours = (last - first) / 3_600_000;
+    if (durationHours <= 0) continue;
+
+    return Math.round((distanceKm / durationHours) * 10) / 10;
+  }
+
   return undefined;
 }

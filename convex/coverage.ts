@@ -100,14 +100,49 @@ export async function computeCoverage(
     }
   }
 
-  // Check each road segment for intersection
+  // Simplify buffer if it has too many vertices (performance safeguard)
+  let checkBuffer = mergedBuffer;
+  try {
+    const coords = turf.coordAll(mergedBuffer);
+    if (coords.length > 5000) {
+      const simplified = turf.simplify(mergedBuffer, { tolerance: 0.0001 });
+      if (simplified) checkBuffer = simplified;
+    }
+  } catch {
+    // Use unsimplified buffer
+  }
+
+  // Check each road's individual segments via midpoint-in-polygon
   let coveredLengthKm = 0;
   let coveredRoadCount = 0;
 
   for (const road of roadCollection.features) {
     try {
-      if (turf.booleanIntersects(road, mergedBuffer)) {
-        coveredLengthKm += road.properties.lengthKm ?? 0;
+      const coords: [number, number][] =
+        road.geometry.type === "MultiLineString"
+          ? road.geometry.coordinates.flat()
+          : road.geometry.coordinates;
+
+      if (!coords || coords.length < 2) continue;
+
+      let roadCoveredLength = 0;
+      for (let i = 0; i < coords.length - 1; i++) {
+        const midpoint = turf.midpoint(
+          turf.point(coords[i]),
+          turf.point(coords[i + 1]),
+        );
+        if (turf.booleanPointInPolygon(midpoint, checkBuffer)) {
+          const segmentLength = turf.distance(
+            turf.point(coords[i]),
+            turf.point(coords[i + 1]),
+            { units: "kilometers" },
+          );
+          roadCoveredLength += segmentLength;
+        }
+      }
+
+      if (roadCoveredLength > 0) {
+        coveredLengthKm += roadCoveredLength;
         coveredRoadCount++;
       }
     } catch {

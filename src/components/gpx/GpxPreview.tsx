@@ -64,6 +64,11 @@ export default function GpxPreview({
 
       <p className="mt-2 text-xs text-gray-500">
         {t("map.distance", { km: parsedRoute.distanceKm.toFixed(2) })}
+        {parsedRoute.avgSpeedKmh != null && (
+          <span className="ms-2">
+            {t("map.speed", { speed: parsedRoute.avgSpeedKmh.toFixed(1) })}
+          </span>
+        )}
       </p>
       {parsedRoute.startedAt && (
         <p className="mt-0.5 text-xs text-gray-400">

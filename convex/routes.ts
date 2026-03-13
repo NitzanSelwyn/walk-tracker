@@ -28,6 +28,7 @@ export const saveRoute = mutation({
     color: v.string(),
     routeType: v.optional(v.string()),
     startedAt: v.optional(v.number()),
+    avgSpeedKmh: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
@@ -44,6 +45,7 @@ export const saveRoute = mutation({
       routeType: args.routeType,
       isPublic: true,
       startedAt: args.startedAt,
+      avgSpeedKmh: args.avgSpeedKmh,
     });
 
     // Update profile stats
@@ -146,6 +148,17 @@ export const deleteRoute = mutation({
         totalRoutes: Math.max(0, profile.totalRoutes - 1),
         totalDistanceKm: Math.max(0, profile.totalDistanceKm - route.distanceKm),
       });
+    }
+
+    // Delete associated activities
+    const activities = await ctx.db
+      .query("activities")
+      .withIndex("by_userId", (q) => q.eq("userId", userId))
+      .collect();
+    for (const activity of activities) {
+      if (activity.routeId === args.routeId) {
+        await ctx.db.delete(activity._id);
+      }
     }
 
     await ctx.storage.delete(route.gpxFileId);
