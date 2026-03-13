@@ -50,7 +50,13 @@ export const calculateCoverageInternal = internalAction({
       };
     }
 
-    const roadCollection = JSON.parse(network.geojson);
+    // Fetch geojson from file storage
+    const geojsonUrl = await ctx.runQuery(
+      internal.roadNetworkHelpers.getGeojsonUrl,
+      { storageId: network.geojsonStorageId }
+    );
+    if (!geojsonUrl) throwAppError(ErrorCode.NOT_FOUND_ROAD_NETWORK);
+    const roadCollection = JSON.parse(await (await fetch(geojsonUrl)).text());
 
     // Create buffer around all user routes (20m)
     const routeBuffers = [];

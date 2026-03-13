@@ -11,17 +11,24 @@ export const getCachedNetwork = internalQuery({
   },
 });
 
+export const getGeojsonUrl = internalQuery({
+  args: { storageId: v.id("_storage") },
+  handler: async (ctx, args) => {
+    return await ctx.storage.getUrl(args.storageId);
+  },
+});
+
 export const storeCachedNetwork = internalMutation({
   args: {
     areaId: v.id("areas"),
-    geojson: v.string(),
+    geojsonStorageId: v.id("_storage"),
     totalLengthKm: v.number(),
     roadCount: v.number(),
   },
   handler: async (ctx, args) => {
     return await ctx.db.insert("roadNetworks", {
       areaId: args.areaId,
-      geojson: args.geojson,
+      geojsonStorageId: args.geojsonStorageId,
       totalLengthKm: args.totalLengthKm,
       roadCount: args.roadCount,
       fetchedAt: Date.now(),
@@ -32,13 +39,15 @@ export const storeCachedNetwork = internalMutation({
 export const updateCachedNetwork = internalMutation({
   args: {
     networkId: v.id("roadNetworks"),
-    geojson: v.string(),
+    geojsonStorageId: v.id("_storage"),
+    oldStorageId: v.id("_storage"),
     totalLengthKm: v.number(),
     roadCount: v.number(),
   },
   handler: async (ctx, args) => {
+    await ctx.storage.delete(args.oldStorageId);
     await ctx.db.patch(args.networkId, {
-      geojson: args.geojson,
+      geojsonStorageId: args.geojsonStorageId,
       totalLengthKm: args.totalLengthKm,
       roadCount: args.roadCount,
       fetchedAt: Date.now(),

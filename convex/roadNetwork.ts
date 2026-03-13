@@ -29,8 +29,14 @@ export const fetchRoadNetwork = action({
       { areaId: args.areaId }
     );
     if (cached && Date.now() - cached.fetchedAt < 30 * 24 * 60 * 60 * 1000) {
+      const url = await ctx.runQuery(
+        internal.roadNetworkHelpers.getGeojsonUrl,
+        { storageId: cached.geojsonStorageId }
+      );
+      if (!url) throwAppError(ErrorCode.NOT_FOUND_ROAD_NETWORK);
+      const geojson = await (await fetch(url)).text();
       return {
-        geojson: cached.geojson,
+        geojson,
         totalLengthKm: cached.totalLengthKm,
         roadCount: cached.roadCount,
       };
@@ -138,13 +144,18 @@ export const fetchRoadNetwork = action({
       geojson = JSON.stringify(fc);
     }
 
-    // Store in cache
+    // Store geojson in file storage
+    const blob = new Blob([geojson], { type: "application/json" });
+    const storageId = await ctx.storage.store(blob);
+
+    // Store/update cache record
     if (cached) {
       await ctx.runMutation(
         internal.roadNetworkHelpers.updateCachedNetwork,
         {
           networkId: cached._id,
-          geojson,
+          geojsonStorageId: storageId,
+          oldStorageId: cached.geojsonStorageId,
           totalLengthKm,
           roadCount: features.length,
         }
@@ -154,7 +165,7 @@ export const fetchRoadNetwork = action({
         internal.roadNetworkHelpers.storeCachedNetwork,
         {
           areaId: args.areaId,
-          geojson,
+          geojsonStorageId: storageId,
           totalLengthKm,
           roadCount: features.length,
         }

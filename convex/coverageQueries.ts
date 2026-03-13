@@ -43,9 +43,12 @@ export const getUserCoverages = query({
 export const getCachedRoadNetwork = query({
   args: { areaId: v.id("areas") },
   handler: async (ctx, args) => {
-    return await ctx.db
+    const network = await ctx.db
       .query("roadNetworks")
       .withIndex("by_areaId", (q) => q.eq("areaId", args.areaId))
       .unique();
+    if (!network) return null;
+    const geojsonUrl = await ctx.storage.getUrl(network.geojsonStorageId);
+    return { ...network, geojsonUrl };
   },
 });

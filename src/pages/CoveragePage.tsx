@@ -35,6 +35,8 @@ export default function CoveragePage() {
     }
   }, [areas.length, seedAreas]);
 
+  const [geojsonString, setGeojsonString] = useState<string | undefined>();
+
   // Reactive queries for selected area
   const roadNetwork = useQuery(
     api.coverageQueries.getCachedRoadNetwork,
@@ -46,8 +48,26 @@ export default function CoveragePage() {
   );
   const routes = useQuery(api.routes.getUserRoutes) ?? [];
 
+  // Fetch geojson from file storage URL
+  useEffect(() => {
+    if (!roadNetwork?.geojsonUrl) {
+      setGeojsonString(undefined);
+      return;
+    }
+    let cancelled = false;
+    fetch(roadNetwork.geojsonUrl)
+      .then((res) => res.text())
+      .then((text) => {
+        if (!cancelled) setGeojsonString(text);
+      })
+      .catch(() => {
+        if (!cancelled) setGeojsonString(undefined);
+      });
+    return () => { cancelled = true; };
+  }, [roadNetwork?.geojsonUrl]);
+
   // Coverage visualization (grid-based spatial index)
-  const coveredRoadIds = useCoveredRoadIds(roadNetwork?.geojson, routes);
+  const coveredRoadIds = useCoveredRoadIds(geojsonString, routes);
 
   // Fly to area bounds when selected
   const selectedArea = areas.find((a) => a._id === selectedAreaId);
@@ -144,9 +164,9 @@ export default function CoveragePage() {
         )}
 
         <MapContainer flyToBounds={flyToBounds}>
-          {roadNetwork?.geojson && (
+          {geojsonString && (
             <RoadNetworkLayer
-              roadNetworkGeojson={roadNetwork.geojson}
+              roadNetworkGeojson={geojsonString}
               coveredRoadIds={coveredRoadIds}
             />
           )}

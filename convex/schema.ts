@@ -49,7 +49,7 @@ export default defineSchema({
 
   roadNetworks: defineTable({
     areaId: v.id("areas"),
-    geojson: v.string(),
+    geojsonStorageId: v.id("_storage"),
     totalLengthKm: v.number(),
     roadCount: v.number(),
     fetchedAt: v.number(),
