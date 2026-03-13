@@ -15,6 +15,7 @@ export default defineSchema({
     totalDistanceKm: v.number(),
     totalRoutes: v.number(),
     role: v.optional(v.union(v.literal("regular"), v.literal("premium"), v.literal("admin"))),
+    autoTrimEnabled: v.optional(v.boolean()),
   }).index("by_userId", ["userId"]),
 
   routes: defineTable({
@@ -34,6 +35,14 @@ export default defineSchema({
     isPublic: v.boolean(),
     startedAt: v.optional(v.number()),
     avgSpeedKmh: v.optional(v.number()),
+    publicGeojson: v.optional(v.string()),
+    publicBoundingBox: v.optional(v.object({
+      minLat: v.number(),
+      maxLat: v.number(),
+      minLng: v.number(),
+      maxLng: v.number(),
+    })),
+    isHiddenByZone: v.optional(v.boolean()),
   })
     .index("by_userId", ["userId"])
     .index("by_userId_startedAt", ["userId", "startedAt"]),
@@ -131,6 +140,16 @@ export default defineSchema({
     .index("by_pair", ["requesterId", "receiverId"])
     .index("by_receiverId_status", ["receiverId", "status"])
     .index("by_requesterId_status", ["requesterId", "status"]),
+
+  privacyZones: defineTable({
+    userId: v.id("users"),
+    name: v.string(),
+    zoneType: v.union(v.literal("circle"), v.literal("polygon")),
+    center: v.optional(v.object({ lat: v.number(), lng: v.number() })),
+    radiusMeters: v.optional(v.number()),
+    vertices: v.optional(v.array(v.object({ lat: v.number(), lng: v.number() }))),
+    createdAt: v.number(),
+  }).index("by_userId", ["userId"]),
 
   notifications: defineTable({
     userId: v.id("users"),

@@ -10,6 +10,7 @@ const navLinks = [
   { path: "/feed", key: "feed" },
   { path: "/leaderboard", key: "leaderboard" },
   { path: "/community", key: "community" },
+  { path: "/settings", key: "settings" },
 ] as const;
 
 export default function Header() {

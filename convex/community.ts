@@ -154,8 +154,8 @@ export const getAllPublicRoutes = query({
         .collect();
 
       for (const route of routes) {
-        if (!route.isPublic) continue;
-        const rbb = route.boundingBox;
+        if (!route.isPublic || route.isHiddenByZone) continue;
+        const rbb = route.publicBoundingBox ?? route.boundingBox;
         const overlaps =
           rbb.maxLat >= bb.minLat &&
           rbb.minLat <= bb.maxLat &&
@@ -164,7 +164,7 @@ export const getAllPublicRoutes = query({
         if (overlaps) {
           allRoutes.push({
             userId: route.userId,
-            geojson: route.geojson,
+            geojson: route.publicGeojson ?? route.geojson,
             color: route.color,
           });
         }

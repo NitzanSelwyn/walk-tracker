@@ -31,7 +31,7 @@ export default function CommunityRoutesLayer({ routes }: Props) {
         const geojson = JSON.parse(route.geojson);
         L.geoJSON(geojson, {
           style: {
-            color: route.color,
+            color: "#1e3a5f",
             weight: 2,
             opacity: 0.6,
           },

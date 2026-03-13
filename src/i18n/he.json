@@ -10,6 +10,7 @@
     "feed": "עדכונים",
     "leaderboard": "טבלת מובילים",
     "community": "קהילה",
+    "settings": "הגדרות",
     "profile": "פרופיל"
   },
   "auth": {
@@ -181,6 +182,32 @@
     "ctaTitle": "מוכנים לחקור את השכונה?",
     "ctaSubtitle": "הצטרפו לקהילה והתחילו לעקוב אחר ההליכות. בחינם לגמרי."
   },
+  "settings": {
+    "title": "הגדרות",
+    "privacyZones": "אזורי פרטיות",
+    "privacyZonesDesc": "הגדירו אזורים להסתרה מהמסלולים הציבוריים שלכם. נתוני מסלול ליד אזורים אלו יחתכו לפני שאחרים יראו אותם.",
+    "addZone": "הוסף אזור",
+    "editZone": "ערוך אזור",
+    "deleteZone": "מחק אזור",
+    "confirmDeleteZone": "למחוק אזור פרטיות זה? המסלולים שלך יהיו גלויים לחלוטין באזור זה.",
+    "zoneName": "שם האזור",
+    "zoneNamePlaceholder": "למשל: בית, משרד",
+    "circle": "עיגול",
+    "polygon": "מצולע",
+    "radius": "רדיוס",
+    "clickToPlace": "לחצו על המפה למיקום המרכז, ואז גררו להתאמה.",
+    "drawPolygon": "לחצו על המפה כדי לצייר את צורת המצולע.",
+    "autoTrim": "חיתוך אוטומטי של קצוות",
+    "autoTrimDesc": "הסתרה אוטומטית של 200 המטרים הראשונים והאחרונים בכל מסלול, גם ללא אזורי פרטיות.",
+    "saving": "שומר...",
+    "zoneLimit": "מקסימום 5 אזורים הושג.",
+    "noZones": "אין אזורי פרטיות עדיין. הוסיפו אחד כדי להגן על מיקום הבית.",
+    "chooseShape": "בחרו צורת אזור",
+    "circleDesc": "רדיוס קבוע סביב נקודה",
+    "polygonDesc": "אזור מותאם אישית",
+    "polygonVertices": "קודקודים",
+    "polygonClearRedraw": "נקה וצייר מחדש"
+  },
   "errors": {
     "AUTH_NOT_AUTHENTICATED": "יש להתחבר כדי להמשיך",
     "NOT_FOUND_ROUTE": "המסלול לא נמצא או שאין גישה",
@@ -194,7 +221,10 @@
     "FRIENDSHIP_ALREADY_EXISTS": "אתם כבר חברים",
     "FRIENDSHIP_NOT_PENDING": "בקשת חברות זו כבר לא ממתינה",
     "FRIENDSHIP_NOT_RECEIVER": "לא ניתן להגיב לבקשה זו",
-    "EXTERNAL_OVERPASS_API": "שירות רשת הכבישים אינו זמין כרגע. נסה שוב מאוחר יותר."
+    "EXTERNAL_OVERPASS_API": "שירות רשת הכבישים אינו זמין כרגע. נסה שוב מאוחר יותר.",
+    "PRIVACY_ZONE_LIMIT": "מותר עד 5 אזורי פרטיות.",
+    "PRIVACY_ZONE_INVALID": "הגדרת אזור פרטיות לא תקינה.",
+    "PRIVACY_ZONE_NOT_FOUND": "אזור פרטיות לא נמצא."
   },
   "success": {
     "routeUploaded": "המסלול הועלה בהצלחה",
@@ -207,7 +237,10 @@
     "friendRequestSent": "בקשת חברות נשלחה",
     "friendRequestAccepted": "בקשת חברות אושרה",
     "friendRequestRejected": "בקשת חברות נדחתה",
-    "unfriended": "החברות הוסרה"
+    "unfriended": "החברות הוסרה",
+    "zoneCreated": "אזור פרטיות נוצר",
+    "zoneUpdated": "אזור פרטיות עודכן",
+    "zoneDeleted": "אזור פרטיות נמחק"
   },
   "common": {
     "loading": "טוען...",

@@ -1,6 +1,7 @@
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
+import { internal } from "./_generated/api";
 import { ErrorCode, throwAppError } from "./errorCodes";
 import { areFriends } from "./friendHelpers";
 
@@ -55,6 +56,7 @@ export const updateProfile = mutation({
     bio: v.optional(v.string()),
     isPublic: v.optional(v.boolean()),
     isMapPublic: v.optional(v.boolean()),
+    autoTrimEnabled: v.optional(v.boolean()),
   },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
@@ -72,6 +74,7 @@ export const updateProfile = mutation({
     if (args.bio !== undefined) updates.bio = args.bio;
     if (args.isPublic !== undefined) updates.isPublic = args.isPublic;
     if (args.isMapPublic !== undefined) updates.isMapPublic = args.isMapPublic;
+    if (args.autoTrimEnabled !== undefined) updates.autoTrimEnabled = args.autoTrimEnabled;
 
     await ctx.db.patch(profile._id, updates);
 
@@ -85,6 +88,15 @@ export const updateProfile = mutation({
       for (const route of routes) {
         await ctx.db.patch(route._id, { isPublic: args.isPublic });
       }
+    }
+
+    // Recompute clipping when autoTrim changes
+    if (args.autoTrimEnabled !== undefined) {
+      await ctx.scheduler.runAfter(
+        0,
+        internal.privacyZoneClipping.recomputeAllUserRoutes,
+        { userId },
+      );
     }
   },
 });

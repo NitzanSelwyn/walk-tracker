@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { api } from "../../convex/_generated/api";
 import MapContainer from "../components/map/MapContainer";
 import RouteLayer from "../components/map/RouteLayer";
+import PrivacyZoneOverlay from "../components/privacy/PrivacyZoneOverlay";
 import GpxUploader from "../components/gpx/GpxUploader";
 import GpxPreview from "../components/gpx/GpxPreview";
 import RouteList from "../components/gpx/RouteList";
@@ -15,6 +16,7 @@ import type { LatLngBoundsExpression } from "leaflet";
 export default function MapPage() {
   const { t } = useTranslation();
   const routes = useQuery(api.routes.getUserRoutes) ?? [];
+  const zones = useQuery(api.privacyZones.getMyZones) ?? [];
   const { parsedRoute, parsing, error, parseFile, reset } = useGpxParser();
   const { upload, uploading } = useFileUpload();
 
@@ -199,6 +201,9 @@ export default function MapPage() {
         )}
 
         <MapContainer flyToBounds={flyToBounds}>
+          {/* Privacy zone overlays */}
+          <PrivacyZoneOverlay zones={zones} />
+
           {/* Saved routes */}
           <RouteLayer routes={filteredRoutes} visibleIds={visibleIds} />
 

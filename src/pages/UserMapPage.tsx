@@ -198,7 +198,7 @@ export default function UserMapPage() {
                       {/* Color swatch */}
                       <div
                         className="h-3 w-3 shrink-0 rounded-full ring-1 ring-black/10"
-                        style={{ backgroundColor: route.color }}
+                        style={{ backgroundColor: isOwnProfile ? route.color : "#1e3a5f" }}
                       />
 
                       {/* Name — click to zoom */}
@@ -258,7 +258,11 @@ export default function UserMapPage() {
         )}
 
         <MapContainer flyToBounds={flyToBounds}>
-          <RouteLayer routes={filteredRoutes} visibleIds={visibleIds} />
+          <RouteLayer
+            routes={filteredRoutes}
+            visibleIds={visibleIds}
+            {...(!isOwnProfile && { styleOverride: { color: "#1e3a5f", weight: 3, opacity: 0.85 } })}
+          />
         </MapContainer>
       </div>
     </div>

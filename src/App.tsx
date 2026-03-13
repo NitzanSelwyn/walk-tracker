@@ -16,6 +16,7 @@ const LeaderboardPage = lazy(() => import("./pages/LeaderboardPage"));
 const CommunityPage = lazy(() => import("./pages/CommunityPage"));
 const ProfilePage = lazy(() => import("./pages/ProfilePage"));
 const UserMapPage = lazy(() => import("./pages/UserMapPage"));
+const SettingsPage = lazy(() => import("./pages/SettingsPage"));
 
 function PageSpinner() {
   return (
@@ -70,6 +71,7 @@ function App() {
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/profile/:userId" element={<ProfilePage />} />
               <Route path="/profile/:userId/map" element={<UserMapPage />} />
+              <Route path="/settings" element={<SettingsPage />} />
             </Routes>
           </Suspense>
         </Layout>

@@ -1,6 +1,7 @@
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
+import { internal } from "./_generated/api";
 import { ErrorCode, throwAppError } from "./errorCodes";
 import { areFriends } from "./friendHelpers";
 
@@ -47,6 +48,13 @@ export const saveRoute = mutation({
       startedAt: args.startedAt,
       avgSpeedKmh: args.avgSpeedKmh,
     });
+
+    // Schedule privacy zone clipping
+    await ctx.scheduler.runAfter(
+      0,
+      internal.privacyZoneClipping.clipSingleRoute,
+      { routeId, userId },
+    );
 
     // Update profile stats
     const profile = await ctx.db
@@ -105,12 +113,19 @@ export const getRoutesByUserId = query({
       .withIndex("by_userId", (q) => q.eq("userId", args.userId))
       .unique();
 
-    // Public map → return ALL routes regardless of profile/route privacy
+    // Public map → return ALL routes (clipped for privacy)
     if (profile?.isMapPublic) {
-      return await ctx.db
+      const routes = await ctx.db
         .query("routes")
         .withIndex("by_userId", (q) => q.eq("userId", args.userId))
         .collect();
+      return routes
+        .filter((r) => !r.isHiddenByZone)
+        .map((r) => ({
+          ...r,
+          geojson: r.publicGeojson ?? r.geojson,
+          boundingBox: r.publicBoundingBox ?? r.boundingBox,
+        }));
     }
 
     // Private profile → only friends can see routes
@@ -124,7 +139,13 @@ export const getRoutesByUserId = query({
       .withIndex("by_userId", (q) => q.eq("userId", args.userId))
       .collect();
 
-    return routes.filter((r) => r.isPublic);
+    return routes
+      .filter((r) => r.isPublic && !r.isHiddenByZone)
+      .map((r) => ({
+        ...r,
+        geojson: r.publicGeojson ?? r.geojson,
+        boundingBox: r.publicBoundingBox ?? r.boundingBox,
+      }));
   },
 });
 

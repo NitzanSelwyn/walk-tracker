@@ -10,6 +10,7 @@
     "feed": "Feed",
     "leaderboard": "Leaderboard",
     "community": "Community",
+    "settings": "Settings",
     "profile": "Profile"
   },
   "auth": {
@@ -181,6 +182,32 @@
     "ctaTitle": "Ready to explore your neighborhood?",
     "ctaSubtitle": "Join the community and start tracking your walks. It's completely free."
   },
+  "settings": {
+    "title": "Settings",
+    "privacyZones": "Privacy Zones",
+    "privacyZonesDesc": "Define areas to hide from your public routes. Route data near these zones will be clipped before others see it.",
+    "addZone": "Add Zone",
+    "editZone": "Edit Zone",
+    "deleteZone": "Delete Zone",
+    "confirmDeleteZone": "Delete this privacy zone? Your routes will become fully visible in this area.",
+    "zoneName": "Zone Name",
+    "zoneNamePlaceholder": "e.g. Home, Office",
+    "circle": "Circle",
+    "polygon": "Polygon",
+    "radius": "Radius",
+    "clickToPlace": "Click on the map to place the center, then drag to adjust.",
+    "drawPolygon": "Click on the map to draw your polygon shape.",
+    "autoTrim": "Auto-trim Route Ends",
+    "autoTrimDesc": "Automatically hide the first and last 200m of every route, even without privacy zones.",
+    "saving": "Saving...",
+    "zoneLimit": "Maximum 5 zones reached.",
+    "noZones": "No privacy zones yet. Add one to protect your home location.",
+    "chooseShape": "Choose zone shape",
+    "circleDesc": "Fixed radius around a point",
+    "polygonDesc": "Custom drawn area",
+    "polygonVertices": "Vertices",
+    "polygonClearRedraw": "Clear & redraw"
+  },
   "errors": {
     "AUTH_NOT_AUTHENTICATED": "Please sign in to continue",
     "NOT_FOUND_ROUTE": "Route not found or access denied",
@@ -194,7 +221,10 @@
     "FRIENDSHIP_ALREADY_EXISTS": "You are already friends",
     "FRIENDSHIP_NOT_PENDING": "This friend request is no longer pending",
     "FRIENDSHIP_NOT_RECEIVER": "You cannot respond to this request",
-    "EXTERNAL_OVERPASS_API": "Road network service is temporarily unavailable. Please try again later."
+    "EXTERNAL_OVERPASS_API": "Road network service is temporarily unavailable. Please try again later.",
+    "PRIVACY_ZONE_LIMIT": "Maximum of 5 privacy zones allowed.",
+    "PRIVACY_ZONE_INVALID": "Invalid privacy zone configuration.",
+    "PRIVACY_ZONE_NOT_FOUND": "Privacy zone not found."
   },
   "success": {
     "routeUploaded": "Route uploaded successfully",
@@ -207,7 +237,10 @@
     "friendRequestSent": "Friend request sent",
     "friendRequestAccepted": "Friend request accepted",
     "friendRequestRejected": "Friend request rejected",
-    "unfriended": "Unfriended"
+    "unfriended": "Unfriended",
+    "zoneCreated": "Privacy zone created",
+    "zoneUpdated": "Privacy zone updated",
+    "zoneDeleted": "Privacy zone deleted"
   },
   "common": {
     "loading": "Loading...",
