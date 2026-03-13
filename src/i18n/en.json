@@ -40,7 +40,12 @@
     "preview": "Preview",
     "save": "Save Route",
     "cancel": "Cancel",
-    "visibility": "Toggle visibility"
+    "visibility": "Toggle visibility",
+    "walk": "Walk",
+    "bike": "Bike",
+    "all": "All",
+    "routeType": "Route type",
+    "filterByType": "Filter by type"
   },
   "coverage": {
     "title": "Coverage",
@@ -53,7 +58,9 @@
     "distance": "Distance",
     "percentage": "{{percent}}%",
     "recalculate": "Recalculate",
-    "noArea": "Select an area to see your coverage"
+    "noArea": "Select an area to see your coverage",
+    "lastUpdated": "Last updated: {{time}}",
+    "pendingCalculation": "Coverage will be calculated soon"
   },
   "feed": {
     "title": "Activity Feed",
@@ -120,6 +127,24 @@
     "stravaStep4Desc": "Upload the GPX file to Walk Tracker Map and see it on your map.",
     "ctaTitle": "Ready to explore your neighborhood?",
     "ctaSubtitle": "Join the community and start tracking your walks. It's completely free."
+  },
+  "errors": {
+    "AUTH_NOT_AUTHENTICATED": "Please sign in to continue",
+    "NOT_FOUND_ROUTE": "Route not found or access denied",
+    "NOT_FOUND_PROFILE": "Profile not found",
+    "NOT_FOUND_AREA": "Area not found",
+    "NOT_FOUND_ROAD_NETWORK": "Road network not loaded yet. Please fetch it first.",
+    "VALIDATION_SELF_FOLLOW": "You cannot follow yourself",
+    "EXTERNAL_OVERPASS_API": "Road network service is temporarily unavailable. Please try again later."
+  },
+  "success": {
+    "routeUploaded": "Route uploaded successfully",
+    "routeDeleted": "Route deleted",
+    "routeRenamed": "Route renamed",
+    "profileUpdated": "Profile updated",
+    "coverageCalculated": "Coverage calculated",
+    "followed": "Following",
+    "unfollowed": "Unfollowed"
   },
   "common": {
     "loading": "Loading...",

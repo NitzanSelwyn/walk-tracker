@@ -89,6 +89,27 @@ export const getAreaStats = query({
   },
 });
 
+export const getAreaStatsCached = query({
+  args: { areaId: v.id("areas") },
+  handler: async (ctx, args) => {
+    const cached = await ctx.db
+      .query("areaCoverageStats")
+      .withIndex("by_areaId", (q) => q.eq("areaId", args.areaId))
+      .unique();
+
+    if (!cached) return null;
+
+    return {
+      walkerCount: cached.walkerCount,
+      communityCoveragePercent: cached.communityCoveragePercent,
+      totalCoveredKm: cached.totalCoveredKm,
+      totalRoadKm: cached.totalRoadKm,
+      topContributors: cached.topContributors,
+      calculatedAt: cached.calculatedAt,
+    };
+  },
+});
+
 export const getAllPublicRoutes = query({
   args: { areaId: v.id("areas") },
   handler: async (ctx, args) => {

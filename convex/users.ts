@@ -1,6 +1,7 @@
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
+import { ErrorCode, throwAppError } from "./errorCodes";
 
 export const currentUser = query({
   args: {},
@@ -24,7 +25,7 @@ export const ensureProfile = mutation({
   args: {},
   handler: async (ctx) => {
     const userId = await getAuthUserId(ctx);
-    if (!userId) throw new Error("Not authenticated");
+    if (!userId) throwAppError(ErrorCode.AUTH_NOT_AUTHENTICATED);
 
     const existing = await ctx.db
       .query("userProfiles")
@@ -54,14 +55,14 @@ export const updateProfile = mutation({
   },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
-    if (!userId) throw new Error("Not authenticated");
+    if (!userId) throwAppError(ErrorCode.AUTH_NOT_AUTHENTICATED);
 
     const profile = await ctx.db
       .query("userProfiles")
       .withIndex("by_userId", (q) => q.eq("userId", userId))
       .unique();
 
-    if (!profile) throw new Error("Profile not found");
+    if (!profile) throwAppError(ErrorCode.NOT_FOUND_PROFILE);
 
     const updates: Record<string, unknown> = {};
     if (args.displayName !== undefined) updates.displayName = args.displayName;

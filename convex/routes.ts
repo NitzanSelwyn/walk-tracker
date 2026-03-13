@@ -1,12 +1,13 @@
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
+import { ErrorCode, throwAppError } from "./errorCodes";
 
 export const generateUploadUrl = mutation({
   args: {},
   handler: async (ctx) => {
     const userId = await getAuthUserId(ctx);
-    if (!userId) throw new Error("Not authenticated");
+    if (!userId) throwAppError(ErrorCode.AUTH_NOT_AUTHENTICATED);
     return await ctx.storage.generateUploadUrl();
   },
 });
@@ -24,11 +25,12 @@ export const saveRoute = mutation({
       maxLng: v.number(),
     }),
     color: v.string(),
+    routeType: v.optional(v.string()),
     startedAt: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
-    if (!userId) throw new Error("Not authenticated");
+    if (!userId) throwAppError(ErrorCode.AUTH_NOT_AUTHENTICATED);
 
     const routeId = await ctx.db.insert("routes", {
       userId,
@@ -38,6 +40,7 @@ export const saveRoute = mutation({
       distanceKm: args.distanceKm,
       boundingBox: args.boundingBox,
       color: args.color,
+      routeType: args.routeType,
       isPublic: true,
       startedAt: args.startedAt,
     });
@@ -124,10 +127,10 @@ export const deleteRoute = mutation({
   args: { routeId: v.id("routes") },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
-    if (!userId) throw new Error("Not authenticated");
+    if (!userId) throwAppError(ErrorCode.AUTH_NOT_AUTHENTICATED);
 
     const route = await ctx.db.get(args.routeId);
-    if (!route || route.userId !== userId) throw new Error("Not found");
+    if (!route || route.userId !== userId) throwAppError(ErrorCode.NOT_FOUND_ROUTE);
 
     // Update profile stats
     const profile = await ctx.db
@@ -151,10 +154,10 @@ export const renameRoute = mutation({
   args: { routeId: v.id("routes"), name: v.string() },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
-    if (!userId) throw new Error("Not authenticated");
+    if (!userId) throwAppError(ErrorCode.AUTH_NOT_AUTHENTICATED);
 
     const route = await ctx.db.get(args.routeId);
-    if (!route || route.userId !== userId) throw new Error("Not found");
+    if (!route || route.userId !== userId) throwAppError(ErrorCode.NOT_FOUND_ROUTE);
 
     await ctx.db.patch(args.routeId, { name: args.name });
   },

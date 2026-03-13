@@ -20,7 +20,7 @@ export default function CommunityPage() {
   const [sidebarOpen, setSidebarOpen] = useState(!isMobile);
 
   const stats = useQuery(
-    api.community.getAreaStats,
+    api.community.getAreaStatsCached,
     selectedAreaId ? { areaId: selectedAreaId } : "skip",
   );
   const communityRoutes = useQuery(
@@ -70,6 +70,12 @@ export default function CommunityPage() {
               <div className="flex justify-center py-8">
                 <div className="h-5 w-5 animate-spin rounded-full border-2 border-emerald-500 border-t-transparent" />
               </div>
+            )}
+
+            {selectedAreaId && stats === null && (
+              <p className="py-8 text-center text-sm text-gray-400">
+                {t("coverage.pendingCalculation")}
+              </p>
             )}
 
             {stats && (
@@ -138,6 +144,15 @@ export default function CommunityPage() {
                   <p className="text-center text-xs text-gray-400">
                     {t("community.routeCount", {
                       count: communityRoutes.length,
+                    })}
+                  </p>
+                )}
+
+                {/* Last updated */}
+                {stats?.calculatedAt && (
+                  <p className="text-center text-xs text-gray-400">
+                    {t("coverage.lastUpdated", {
+                      time: new Date(stats.calculatedAt).toLocaleDateString(),
                     })}
                   </p>
                 )}

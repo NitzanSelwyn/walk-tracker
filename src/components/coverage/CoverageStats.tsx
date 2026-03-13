@@ -6,6 +6,7 @@ interface CoverageData {
   coveragePercent: number;
   coveredRoadCount: number;
   totalRoadCount: number;
+  calculatedAt?: number;
 }
 
 interface Props {
@@ -58,21 +59,32 @@ export default function CoverageStats({
         </div>
       )}
 
-      {/* Recalculate button */}
-      <button
-        onClick={onRecalculate}
-        disabled={calculating}
-        className="mt-4 w-full rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm font-medium text-emerald-700 transition-colors hover:bg-emerald-100 disabled:opacity-50"
-      >
-        {calculating ? (
-          <span className="flex items-center justify-center gap-2">
-            <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-emerald-600 border-t-transparent" />
-            {t("common.loading")}
+      {/* Last updated + recalculate */}
+      <div className="mt-4 flex items-center justify-between text-xs text-gray-400">
+        {coverage?.calculatedAt ? (
+          <span>
+            {t("coverage.lastUpdated", {
+              time: new Date(coverage.calculatedAt).toLocaleDateString(),
+            })}
           </span>
         ) : (
-          t("coverage.recalculate")
+          <span>{t("coverage.pendingCalculation")}</span>
         )}
-      </button>
+        <button
+          onClick={onRecalculate}
+          disabled={calculating}
+          className="text-emerald-600 hover:text-emerald-700 disabled:opacity-50"
+        >
+          {calculating ? (
+            <span className="flex items-center gap-1">
+              <span className="h-3 w-3 animate-spin rounded-full border-2 border-emerald-600 border-t-transparent" />
+              {t("common.loading")}
+            </span>
+          ) : (
+            t("coverage.recalculate")
+          )}
+        </button>
+      </div>
     </div>
   );
 }

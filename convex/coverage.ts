@@ -1,12 +1,13 @@
 "use node";
 
-import { action } from "./_generated/server";
+import { action, internalAction } from "./_generated/server";
 import { v } from "convex/values";
 import { internal } from "./_generated/api";
+import { ErrorCode, throwAppError } from "./errorCodes";
 import type { Doc } from "./_generated/dataModel";
 import * as turf from "@turf/turf";
 
-export const calculateCoverage = action({
+export const calculateCoverageInternal = internalAction({
   args: {
     areaId: v.id("areas"),
     userId: v.id("users"),
@@ -24,7 +25,7 @@ export const calculateCoverage = action({
       internal.roadNetworkHelpers.getCachedNetwork,
       { areaId: args.areaId }
     );
-    if (!network) throw new Error("Road network not loaded. Fetch it first.");
+    if (!network) throwAppError(ErrorCode.NOT_FOUND_ROAD_NETWORK);
 
     // Get user routes
     const routes: Doc<"routes">[] = await ctx.runQuery(
@@ -135,5 +136,25 @@ export const calculateCoverage = action({
       coveredLengthKm,
       totalLengthKm: network.totalLengthKm,
     };
+  },
+});
+
+export const calculateCoverage = action({
+  args: {
+    areaId: v.id("areas"),
+    userId: v.id("users"),
+  },
+  handler: async (
+    ctx,
+    args,
+  ): Promise<{
+    coveragePercent: number;
+    coveredLengthKm: number;
+    totalLengthKm: number;
+  }> => {
+    return await ctx.runAction(internal.coverage.calculateCoverageInternal, {
+      areaId: args.areaId,
+      userId: args.userId,
+    });
   },
 });

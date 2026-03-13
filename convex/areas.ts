@@ -52,6 +52,21 @@ export const seed = mutation({
         nameHe: "הרצליה",
         boundingBox: { minLat: 32.15, maxLat: 32.18, minLng: 34.77, maxLng: 34.81 },
       },
+      {
+        name: "Petah Tikva",
+        nameHe: "פתח תקווה",
+        boundingBox: { minLat: 32.07, maxLat: 32.12, minLng: 34.85, maxLng: 34.92 },
+      },
+      {
+        name: "Bnei Brak",
+        nameHe: "בני ברק",
+        boundingBox: { minLat: 32.07, maxLat: 32.10, minLng: 34.82, maxLng: 34.86 },
+      },
+      {
+        name: "Givatayim",
+        nameHe: "גבעתיים",
+        boundingBox: { minLat: 32.06, maxLat: 32.08, minLng: 34.80, maxLng: 34.82 },
+      },
     ];
 
     for (const city of cities) {
@@ -59,5 +74,41 @@ export const seed = mutation({
     }
 
     return "Seeded " + cities.length + " areas";
+  },
+});
+
+export const addMissing = mutation({
+  args: {},
+  handler: async (ctx) => {
+    const existing = await ctx.db.query("areas").collect();
+    const existingNames = new Set(existing.map((a) => a.name));
+
+    const allCities = [
+      {
+        name: "Petah Tikva",
+        nameHe: "פתח תקווה",
+        boundingBox: { minLat: 32.07, maxLat: 32.12, minLng: 34.85, maxLng: 34.92 },
+      },
+      {
+        name: "Bnei Brak",
+        nameHe: "בני ברק",
+        boundingBox: { minLat: 32.07, maxLat: 32.10, minLng: 34.82, maxLng: 34.86 },
+      },
+      {
+        name: "Givatayim",
+        nameHe: "גבעתיים",
+        boundingBox: { minLat: 32.06, maxLat: 32.08, minLng: 34.80, maxLng: 34.82 },
+      },
+    ];
+
+    let added = 0;
+    for (const city of allCities) {
+      if (!existingNames.has(city.name)) {
+        await ctx.db.insert("areas", city);
+        added++;
+      }
+    }
+
+    return added > 0 ? `Added ${added} new areas` : "No new areas to add";
   },
 });

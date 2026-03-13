@@ -1,15 +1,18 @@
 import { useState, useCallback } from "react";
 import { useMutation } from "convex/react";
+import { useTranslation } from "react-i18next";
 import { api } from "../../convex/_generated/api";
 import { generateRouteColor, type ParsedRoute } from "../lib/gpx";
+import { handleMutationError, showSuccessToast } from "../lib/errorHandling";
 
 export function useFileUpload() {
+  const { t } = useTranslation();
   const generateUploadUrl = useMutation(api.routes.generateUploadUrl);
   const saveRoute = useMutation(api.routes.saveRoute);
   const [uploading, setUploading] = useState(false);
 
   const upload = useCallback(
-    async (file: File, parsedRoute: ParsedRoute, name?: string) => {
+    async (file: File, parsedRoute: ParsedRoute, name?: string, routeType?: "walk" | "bike") => {
       setUploading(true);
       try {
         // Step 1: Get signed upload URL from Convex
@@ -31,13 +34,18 @@ export function useFileUpload() {
           distanceKm: parsedRoute.distanceKm,
           boundingBox: parsedRoute.boundingBox,
           color: generateRouteColor(),
+          routeType: routeType ?? "walk",
           startedAt: parsedRoute.startedAt,
         });
+        showSuccessToast(t("success.routeUploaded"));
+      } catch (err) {
+        handleMutationError(err, t);
+        throw err;
       } finally {
         setUploading(false);
       }
     },
-    [generateUploadUrl, saveRoute],
+    [generateUploadUrl, saveRoute, t],
   );
 
   return { upload, uploading };

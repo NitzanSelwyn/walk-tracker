@@ -25,6 +25,7 @@ export default function MapPage() {
     LatLngBoundsExpression | undefined
   >();
   const [gpxFile, setGpxFile] = useState<File | null>(null);
+  const [typeFilter, setTypeFilter] = useState<"all" | "walk" | "bike">("all");
 
   // Add newly loaded routes to the visible set
   useEffect(() => {
@@ -66,12 +67,20 @@ export default function MapPage() {
     parseFile(file);
   };
 
-  const handleSave = async (name: string) => {
+  const handleSave = async (name: string, routeType: "walk" | "bike") => {
     if (!gpxFile || !parsedRoute) return;
-    await upload(gpxFile, parsedRoute, name);
-    reset();
-    setGpxFile(null);
+    try {
+      await upload(gpxFile, parsedRoute, name, routeType);
+      reset();
+      setGpxFile(null);
+    } catch {
+      // Error already handled by useFileUpload — preserve state for retry
+    }
   };
+
+  const filteredRoutes = typeFilter === "all"
+    ? routes
+    : routes.filter((r) => (r.routeType ?? "walk") === typeFilter);
 
   const handleCancel = () => {
     reset();
@@ -149,9 +158,26 @@ export default function MapPage() {
             {/* Divider */}
             <div className="border-t border-gray-100" />
 
+            {/* Type filter */}
+            <div className="flex gap-1">
+              {(["all", "walk", "bike"] as const).map((type) => (
+                <button
+                  key={type}
+                  onClick={() => setTypeFilter(type)}
+                  className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${
+                    typeFilter === type
+                      ? "bg-emerald-600 text-white"
+                      : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                  }`}
+                >
+                  {t(`map.${type}`)}
+                </button>
+              ))}
+            </div>
+
             {/* Route list */}
             <RouteList
-              routes={routes}
+              routes={filteredRoutes}
               visibleIds={visibleIds}
               onToggleVisibility={toggleVisibility}
               onZoomTo={handleZoomTo}
@@ -174,7 +200,7 @@ export default function MapPage() {
 
         <MapContainer flyToBounds={flyToBounds}>
           {/* Saved routes */}
-          <RouteLayer routes={routes} visibleIds={visibleIds} />
+          <RouteLayer routes={filteredRoutes} visibleIds={visibleIds} />
 
           {/* Preview route (dashed) */}
           {parsedRoute && (

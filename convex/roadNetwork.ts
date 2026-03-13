@@ -3,6 +3,7 @@
 import { action } from "./_generated/server";
 import { v } from "convex/values";
 import { api, internal } from "./_generated/api";
+import { ErrorCode, throwAppError } from "./errorCodes";
 import type { Doc } from "./_generated/dataModel";
 import * as turf from "@turf/turf";
 
@@ -20,7 +21,7 @@ export const fetchRoadNetwork = action({
     const area: Doc<"areas"> | null = await ctx.runQuery(api.areas.get, {
       areaId: args.areaId,
     });
-    if (!area) throw new Error("Area not found");
+    if (!area) throwAppError(ErrorCode.NOT_FOUND_AREA);
 
     // Check cache (30-day TTL)
     const cached: Doc<"roadNetworks"> | null = await ctx.runQuery(
@@ -48,22 +49,35 @@ export const fetchRoadNetwork = action({
       out skel qt;
     `;
 
-    const response = await fetch("https://overpass-api.de/api/interpreter", {
-      method: "POST",
-      body: "data=" + encodeURIComponent(query),
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    });
+    let data: { elements: Array<{ type: string; id: number; lat?: number; lon?: number; nodes?: number[]; tags?: Record<string, string> }> };
+    const maxRetries = 3;
+    for (let attempt = 0; attempt < maxRetries; attempt++) {
+      const response = await fetch("https://overpass-api.de/api/interpreter", {
+        method: "POST",
+        body: "data=" + encodeURIComponent(query),
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      });
 
-    if (!response.ok) {
-      throw new Error(`Overpass API error: ${response.status}`);
+      if (response.ok) {
+        data = await response.json();
+        break;
+      }
+
+      if (response.status >= 500 && attempt < maxRetries - 1) {
+        // Wait 5s, 15s before retrying on server errors
+        await new Promise((r) => setTimeout(r, (attempt + 1) * 5000));
+        continue;
+      }
+
+      throwAppError(ErrorCode.EXTERNAL_OVERPASS_API);
     }
-
-    const data = await response.json();
+    // TypeScript: data is guaranteed assigned since loop either breaks or throws
+    data = data!;
 
     // Build node lookup — round coords to 5 decimal places (~1.1m accuracy)
     const nodes: Record<string, [number, number]> = {};
     for (const el of data.elements) {
-      if (el.type === "node") {
+      if (el.type === "node" && el.lon !== undefined && el.lat !== undefined) {
         nodes[el.id] = [
           Math.round(el.lon * 1e5) / 1e5,
           Math.round(el.lat * 1e5) / 1e5,
@@ -76,7 +90,7 @@ export const fetchRoadNetwork = action({
     let totalLengthKm = 0;
 
     for (const el of data.elements) {
-      if (el.type !== "way") continue;
+      if (el.type !== "way" || !el.nodes) continue;
       const coords = el.nodes
         .map((nid: number) => nodes[nid])
         .filter(Boolean);

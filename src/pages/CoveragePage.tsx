@@ -3,6 +3,7 @@ import { useQuery, useMutation, useAction } from "convex/react";
 import { useTranslation } from "react-i18next";
 import { api } from "../../convex/_generated/api";
 import type { Id } from "../../convex/_generated/dataModel";
+import { handleMutationError, showSuccessToast } from "../lib/errorHandling";
 import MapContainer from "../components/map/MapContainer";
 import RoadNetworkLayer from "../components/map/RoadNetworkLayer";
 import AreaPicker from "../components/coverage/AreaPicker";
@@ -62,34 +63,19 @@ export default function CoveragePage() {
     if (selectedAreaId && roadNetwork === null && !fetching) {
       setFetching(true);
       fetchRoadNetwork({ areaId: selectedAreaId })
-        .catch(console.error)
+        .catch((err) => handleMutationError(err, t))
         .finally(() => setFetching(false));
     }
-  }, [selectedAreaId, roadNetwork, fetching, fetchRoadNetwork]);
-
-  // Auto-calculate coverage when road network loaded and no coverage data
-  useEffect(() => {
-    if (
-      selectedAreaId &&
-      roadNetwork &&
-      coverage === null &&
-      user?._id &&
-      !calculating
-    ) {
-      setCalculating(true);
-      calculateCoverage({ areaId: selectedAreaId, userId: user._id })
-        .catch(console.error)
-        .finally(() => setCalculating(false));
-    }
-  }, [selectedAreaId, roadNetwork, coverage, user, calculating, calculateCoverage]);
+  }, [selectedAreaId, roadNetwork, fetching, fetchRoadNetwork, t]);
 
   const handleRecalculate = useCallback(() => {
     if (!selectedAreaId || !user?._id || calculating) return;
     setCalculating(true);
     calculateCoverage({ areaId: selectedAreaId, userId: user._id })
-      .catch(console.error)
+      .then(() => showSuccessToast(t("success.coverageCalculated")))
+      .catch((err) => handleMutationError(err, t))
       .finally(() => setCalculating(false));
-  }, [selectedAreaId, user, calculating, calculateCoverage]);
+  }, [selectedAreaId, user, calculating, calculateCoverage, t]);
 
   return (
     <div className="flex h-full">

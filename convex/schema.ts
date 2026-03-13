@@ -28,6 +28,7 @@ export default defineSchema({
       maxLng: v.number(),
     }),
     color: v.string(),
+    routeType: v.optional(v.string()),
     isPublic: v.boolean(),
     startedAt: v.optional(v.number()),
   })
@@ -89,6 +90,24 @@ export default defineSchema({
   })
     .index("by_userId", ["userId"])
     .index("by_createdAt", ["createdAt"]),
+
+  areaCoverageStats: defineTable({
+    areaId: v.id("areas"),
+    walkerCount: v.number(),
+    communityCoveragePercent: v.number(),
+    totalCoveredKm: v.number(),
+    totalRoadKm: v.number(),
+    topContributors: v.array(
+      v.object({
+        userId: v.id("users"),
+        coveragePercent: v.number(),
+        coveredKm: v.number(),
+        displayName: v.string(),
+        image: v.union(v.string(), v.null()),
+      })
+    ),
+    calculatedAt: v.number(),
+  }).index("by_areaId", ["areaId"]),
 
   notifications: defineTable({
     userId: v.id("users"),

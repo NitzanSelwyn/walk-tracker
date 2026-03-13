@@ -40,7 +40,12 @@
     "preview": "תצוגה מקדימה",
     "save": "שמור מסלול",
     "cancel": "ביטול",
-    "visibility": "הצג/הסתר"
+    "visibility": "הצג/הסתר",
+    "walk": "הליכה",
+    "bike": "אופניים",
+    "all": "הכל",
+    "routeType": "סוג מסלול",
+    "filterByType": "סנן לפי סוג"
   },
   "coverage": {
     "title": "כיסוי",
@@ -53,7 +58,9 @@
     "distance": "מרחק",
     "percentage": "{{percent}}%",
     "recalculate": "חשב מחדש",
-    "noArea": "בחר אזור כדי לראות את הכיסוי שלך"
+    "noArea": "בחר אזור כדי לראות את הכיסוי שלך",
+    "lastUpdated": "עודכן לאחרונה: {{time}}",
+    "pendingCalculation": "נתוני הכיסוי יחושבו בקרוב"
   },
   "feed": {
     "title": "עדכונים",
@@ -120,6 +127,24 @@
     "stravaStep4Desc": "העלו את קובץ ה-GPX ל-Walk Tracker Map וצפו בו על המפה שלכם.",
     "ctaTitle": "מוכנים לחקור את השכונה?",
     "ctaSubtitle": "הצטרפו לקהילה והתחילו לעקוב אחר ההליכות. בחינם לגמרי."
+  },
+  "errors": {
+    "AUTH_NOT_AUTHENTICATED": "יש להתחבר כדי להמשיך",
+    "NOT_FOUND_ROUTE": "המסלול לא נמצא או שאין גישה",
+    "NOT_FOUND_PROFILE": "הפרופיל לא נמצא",
+    "NOT_FOUND_AREA": "האזור לא נמצא",
+    "NOT_FOUND_ROAD_NETWORK": "רשת הכבישים טרם נטענה. יש לטעון אותה קודם.",
+    "VALIDATION_SELF_FOLLOW": "לא ניתן לעקוב אחרי עצמך",
+    "EXTERNAL_OVERPASS_API": "שירות רשת הכבישים אינו זמין כרגע. נסה שוב מאוחר יותר."
+  },
+  "success": {
+    "routeUploaded": "המסלול הועלה בהצלחה",
+    "routeDeleted": "המסלול נמחק",
+    "routeRenamed": "שם המסלול שונה",
+    "profileUpdated": "הפרופיל עודכן",
+    "coverageCalculated": "הכיסוי חושב",
+    "followed": "עוקב",
+    "unfollowed": "הפסקת מעקב"
   },
   "common": {
     "loading": "טוען...",

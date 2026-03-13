@@ -5,6 +5,7 @@ import { useParams, Link } from "react-router-dom";
 import { api } from "../../convex/_generated/api";
 import type { Id } from "../../convex/_generated/dataModel";
 import FollowButton from "../components/social/FollowButton";
+import { handleMutationError, showSuccessToast } from "../lib/errorHandling";
 
 export default function ProfilePage() {
   const { t, i18n } = useTranslation();
@@ -65,12 +66,22 @@ export default function ProfilePage() {
   };
 
   const saveEdit = async () => {
-    await updateProfile({ displayName: editName, bio: editBio });
-    setEditing(false);
+    try {
+      await updateProfile({ displayName: editName, bio: editBio });
+      showSuccessToast(t("success.profileUpdated"));
+      setEditing(false);
+    } catch (err) {
+      handleMutationError(err, t);
+    }
   };
 
   const togglePrivacy = async () => {
-    await updateProfile({ isPublic: !profile?.isPublic });
+    try {
+      await updateProfile({ isPublic: !profile?.isPublic });
+      showSuccessToast(t("success.profileUpdated"));
+    } catch (err) {
+      handleMutationError(err, t);
+    }
   };
 
   const isHebrew = i18n.language === "he";

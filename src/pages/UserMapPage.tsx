@@ -30,6 +30,7 @@ export default function UserMapPage() {
   const [flyToBounds, setFlyToBounds] = useState<
     LatLngBoundsExpression | undefined
   >();
+  const [typeFilter, setTypeFilter] = useState<"all" | "walk" | "bike">("all");
 
   // Add newly loaded routes to the visible set
   useEffect(() => {
@@ -72,6 +73,10 @@ export default function UserMapPage() {
     },
     [],
   );
+
+  const filteredRoutes = typeFilter === "all"
+    ? routes
+    : routes.filter((r) => (r.routeType ?? "walk") === typeFilter);
 
   const isLimited =
     !isOwnProfile && profile && "isLimited" in profile && profile.isLimited;
@@ -159,13 +164,30 @@ export default function UserMapPage() {
 
           {/* Route list */}
           <div className="flex-1 overflow-y-auto p-4">
-            {routes.length === 0 ? (
+            {/* Type filter */}
+            <div className="mb-3 flex gap-1">
+              {(["all", "walk", "bike"] as const).map((type) => (
+                <button
+                  key={type}
+                  onClick={() => setTypeFilter(type)}
+                  className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${
+                    typeFilter === type
+                      ? "bg-emerald-600 text-white"
+                      : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                  }`}
+                >
+                  {t(`map.${type}`)}
+                </button>
+              ))}
+            </div>
+
+            {filteredRoutes.length === 0 ? (
               <p className="py-4 text-center text-sm text-gray-400">
                 {t("map.noRoutes")}
               </p>
             ) : (
               <div className="space-y-1.5">
-                {routes.map((route) => (
+                {filteredRoutes.map((route) => (
                   <div
                     key={route._id}
                     className="group rounded-lg border border-gray-100 bg-white p-2.5 transition-colors hover:border-gray-200"
@@ -201,7 +223,8 @@ export default function UserMapPage() {
 
                     {/* Meta row */}
                     <div className="mt-1 flex items-center justify-between text-xs text-gray-400">
-                      <span>
+                      <span className="flex items-center gap-1">
+                        {(route.routeType ?? "walk") === "bike" ? <SmallBikeIcon /> : <SmallWalkIcon />}
                         {t("map.distance", {
                           km: route.distanceKm.toFixed(1),
                         })}
@@ -233,10 +256,29 @@ export default function UserMapPage() {
         )}
 
         <MapContainer flyToBounds={flyToBounds}>
-          <RouteLayer routes={routes} visibleIds={visibleIds} />
+          <RouteLayer routes={filteredRoutes} visibleIds={visibleIds} />
         </MapContainer>
       </div>
     </div>
+  );
+}
+
+function SmallWalkIcon() {
+  return (
+    <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="5" r="2" />
+      <path d="M10 22l4-12m-4 0l-2 8m6-8l2 8M10 10l-2-4" />
+    </svg>
+  );
+}
+
+function SmallBikeIcon() {
+  return (
+    <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="5.5" cy="17.5" r="3.5" />
+      <circle cx="18.5" cy="17.5" r="3.5" />
+      <path d="M15 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-3 11.5V14l-3-3 4-3 2 3h2" />
+    </svg>
   );
 }
 
