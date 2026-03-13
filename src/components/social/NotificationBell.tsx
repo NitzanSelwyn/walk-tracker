@@ -1,6 +1,7 @@
 import { useQuery, useMutation } from "convex/react";
 import { useTranslation } from "react-i18next";
 import { useState, useRef, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { api } from "../../../convex/_generated/api";
 import type { Id } from "../../../convex/_generated/dataModel";
 import { handleMutationError, showSuccessToast } from "../../lib/errorHandling";
@@ -110,7 +111,23 @@ export default function NotificationBell() {
                   className={`border-b border-gray-50 px-4 py-3 ${!n.read ? "bg-emerald-50/50" : ""}`}
                 >
                   <div className="flex items-start gap-3">
-                    {n.sender?.image ? (
+                    {n.senderId ? (
+                      <Link to={`/profile/${n.senderId}`} className="shrink-0 cursor-pointer">
+                        {n.sender?.image ? (
+                          <img
+                            src={n.sender.image}
+                            alt=""
+                            className="h-8 w-8 rounded-full object-cover"
+                          />
+                        ) : (
+                          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-100 text-xs font-medium text-emerald-700">
+                            {(n.sender?.profile?.displayName ?? n.sender?.name ?? "?")
+                              .charAt(0)
+                              .toUpperCase()}
+                          </div>
+                        )}
+                      </Link>
+                    ) : n.sender?.image ? (
                       <img
                         src={n.sender.image}
                         alt=""

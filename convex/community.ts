@@ -1,3 +1,4 @@
+import { getAuthUserId } from "@convex-dev/auth/server";
 import { query } from "./_generated/server";
 import { v } from "convex/values";
 import type { Id } from "./_generated/dataModel";
@@ -116,6 +117,7 @@ export const getAllPublicRoutes = query({
     const area = await ctx.db.get(args.areaId);
     if (!area) return [];
 
+    const viewerId = await getAuthUserId(ctx);
     const bb = area.boundingBox;
 
     // Get all coverage entries for this area to find active users
@@ -128,9 +130,13 @@ export const getAllPublicRoutes = query({
 
     const userIds = coverages.map((c) => c.userId);
 
-    // Build set of public user IDs
+    // Build set of public user IDs (always include the viewer)
     const publicUserIds = new Set<Id<"users">>();
     for (const uid of userIds) {
+      if (viewerId && uid === viewerId) {
+        publicUserIds.add(uid);
+        continue;
+      }
       const profile = await ctx.db
         .query("userProfiles")
         .withIndex("by_userId", (q) => q.eq("userId", uid))
@@ -148,14 +154,22 @@ export const getAllPublicRoutes = query({
     }> = [];
 
     for (const userId of publicUserIds) {
+      const isViewer = viewerId !== null && userId === viewerId;
       const routes = await ctx.db
         .query("routes")
         .withIndex("by_userId", (q) => q.eq("userId", userId))
         .collect();
 
       for (const route of routes) {
-        if (!route.isPublic || route.isHiddenByZone) continue;
-        const rbb = route.publicBoundingBox ?? route.boundingBox;
+        // Viewer's own routes: skip privacy zone filtering, use full geojson
+        if (isViewer) {
+          if (!route.isPublic) continue;
+        } else {
+          if (!route.isPublic || route.isHiddenByZone) continue;
+        }
+        const rbb = isViewer
+          ? route.boundingBox
+          : (route.publicBoundingBox ?? route.boundingBox);
         const overlaps =
           rbb.maxLat >= bb.minLat &&
           rbb.minLat <= bb.maxLat &&
@@ -164,7 +178,7 @@ export const getAllPublicRoutes = query({
         if (overlaps) {
           allRoutes.push({
             userId: route.userId,
-            geojson: route.publicGeojson ?? route.geojson,
+            geojson: isViewer ? route.geojson : (route.publicGeojson ?? route.geojson),
             color: route.color,
           });
         }
