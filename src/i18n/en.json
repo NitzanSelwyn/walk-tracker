@@ -72,7 +72,10 @@
   },
   "feed": {
     "title": "Activity Feed",
-    "empty": "No recent activity. Follow people to see their updates!",
+    "everyone": "Everyone",
+    "following": "Following",
+    "empty": "No recent activity yet.",
+    "emptyFollowing": "No recent activity from people you follow.",
     "routeUpload": "uploaded {{name}}",
     "coverageMilestone": "reached {{percent}}% in {{area}}",
     "areaStarted": "started tracking {{area}}"

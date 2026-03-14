@@ -72,7 +72,10 @@
   },
   "feed": {
     "title": "עדכונים",
-    "empty": "אין פעילות אחרונה. עקוב אחר אנשים כדי לראות את העדכונים שלהם!",
+    "everyone": "כולם",
+    "following": "עוקב",
+    "empty": "אין פעילות אחרונה עדיין.",
+    "emptyFollowing": "אין פעילות אחרונה מאנשים שאתה עוקב אחריהם.",
     "routeUpload": "העלה את {{name}}",
     "coverageMilestone": "הגיע ל-{{percent}}% ב{{area}}",
     "areaStarted": "התחיל לעקוב אחר {{area}}"

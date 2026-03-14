@@ -1,22 +1,25 @@
 import { getAuthUserId } from "@convex-dev/auth/server";
+import { v } from "convex/values";
 import { query } from "./_generated/server";
 import { areFriends } from "./friendHelpers";
 
 export const getFeed = query({
-  args: {},
-  handler: async (ctx) => {
+  args: { followingOnly: v.optional(v.boolean()) },
+  handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
     if (!userId) return [];
 
-    // Get followed user IDs
-    const follows = await ctx.db
-      .query("follows")
-      .withIndex("by_followerId", (q) => q.eq("followerId", userId))
-      .collect();
+    const followingOnly = args.followingOnly ?? false;
 
-    const followingIds = new Set(follows.map((f) => f.followingId));
-    // Include own activities
-    followingIds.add(userId);
+    let followingIds: Set<string> | null = null;
+    if (followingOnly) {
+      const follows = await ctx.db
+        .query("follows")
+        .withIndex("by_followerId", (q) => q.eq("followerId", userId))
+        .collect();
+      followingIds = new Set(follows.map((f) => f.followingId));
+      followingIds.add(userId);
+    }
 
     // Get recent activities (last 200, then filter)
     const activities = await ctx.db
@@ -25,10 +28,10 @@ export const getFeed = query({
       .order("desc")
       .take(200);
 
-    // Filter to followed users, then exclude private users (except self)
+    // Filter based on mode + privacy
     const filtered = [];
     for (const a of activities) {
-      if (!followingIds.has(a.userId)) continue;
+      if (followingIds && !followingIds.has(a.userId)) continue;
 
       // Own activities always visible
       if (a.userId !== userId) {

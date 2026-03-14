@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useQuery } from "convex/react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
@@ -5,17 +6,44 @@ import { api } from "../../convex/_generated/api";
 
 export default function FeedPage() {
   const { t, i18n } = useTranslation();
-  const feed = useQuery(api.activities.getFeed) ?? [];
+  const [followingOnly, setFollowingOnly] = useState(false);
+  const feed = useQuery(api.activities.getFeed, { followingOnly }) ?? [];
 
   return (
     <div className="mx-auto max-w-2xl p-6">
-      <h1 className="mb-6 text-2xl font-bold text-gray-900">
-        {t("feed.title")}
-      </h1>
+      <div className="mb-6 flex items-center justify-between">
+        <h1 className="text-2xl font-bold text-gray-900">
+          {t("feed.title")}
+        </h1>
+        <div className="flex gap-1 rounded-lg bg-gray-100 p-0.5">
+          <button
+            onClick={() => setFollowingOnly(false)}
+            className={`rounded-md px-3 py-1 text-sm font-medium transition-colors ${
+              !followingOnly
+                ? "bg-white text-gray-900 shadow-sm"
+                : "text-gray-500 hover:text-gray-700"
+            }`}
+          >
+            {t("feed.everyone")}
+          </button>
+          <button
+            onClick={() => setFollowingOnly(true)}
+            className={`rounded-md px-3 py-1 text-sm font-medium transition-colors ${
+              followingOnly
+                ? "bg-white text-gray-900 shadow-sm"
+                : "text-gray-500 hover:text-gray-700"
+            }`}
+          >
+            {t("feed.following")}
+          </button>
+        </div>
+      </div>
 
       {feed.length === 0 ? (
         <div className="rounded-lg border border-dashed border-gray-300 p-8 text-center">
-          <p className="text-gray-500">{t("feed.empty")}</p>
+          <p className="text-gray-500">
+            {followingOnly ? t("feed.emptyFollowing") : t("feed.empty")}
+          </p>
         </div>
       ) : (
         <div className="space-y-3">
