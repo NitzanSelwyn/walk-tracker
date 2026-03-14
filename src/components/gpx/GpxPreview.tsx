@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { ParsedRoute } from "../../lib/gpx";
+import { generateRouteColor } from "../../lib/gpx";
+import ColorPicker from "./ColorPicker";
 
 interface Props {
   parsedRoute: ParsedRoute;
-  onSave: (name: string, routeType: "walk" | "bike") => void;
+  onSave: (name: string, routeType: "walk" | "bike", color: string) => void;
   onCancel: () => void;
   saving: boolean;
 }
@@ -18,6 +20,7 @@ export default function GpxPreview({
   const { t } = useTranslation();
   const [name, setName] = useState(parsedRoute.name);
   const [routeType, setRouteType] = useState<"walk" | "bike">("walk");
+  const [color, setColor] = useState(generateRouteColor);
 
   return (
     <div className="rounded-lg border border-emerald-200 bg-emerald-50/60 p-4">
@@ -30,7 +33,7 @@ export default function GpxPreview({
         onChange={(e) => setName(e.target.value)}
         className="w-full rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
         onKeyDown={(e) => {
-          if (e.key === "Enter" && name.trim()) onSave(name.trim(), routeType);
+          if (e.key === "Enter" && name.trim()) onSave(name.trim(), routeType, color);
         }}
       />
 
@@ -62,6 +65,14 @@ export default function GpxPreview({
         </button>
       </div>
 
+      {/* Color picker */}
+      <div className="mt-2">
+        <label className="mb-1 block text-xs font-medium text-gray-600">
+          {t("map.chooseColor")}
+        </label>
+        <ColorPicker value={color} onChange={setColor} />
+      </div>
+
       <p className="mt-2 text-xs text-gray-500">
         {t("map.distance", { km: parsedRoute.distanceKm.toFixed(2) })}
         {parsedRoute.avgSpeedKmh != null && (
@@ -77,7 +88,7 @@ export default function GpxPreview({
       )}
       <div className="mt-3 flex gap-2">
         <button
-          onClick={() => onSave(name.trim(), routeType)}
+          onClick={() => onSave(name.trim(), routeType, color)}
           disabled={saving || !name.trim()}
           className="flex-1 rounded-md bg-emerald-600 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-emerald-700 disabled:opacity-50"
         >

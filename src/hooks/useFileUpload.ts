@@ -12,7 +12,7 @@ export function useFileUpload() {
   const [uploading, setUploading] = useState(false);
 
   const upload = useCallback(
-    async (file: File, parsedRoute: ParsedRoute, name?: string, routeType?: "walk" | "bike") => {
+    async (file: File, parsedRoute: ParsedRoute, name?: string, routeType?: "walk" | "bike", color?: string) => {
       setUploading(true);
       try {
         // Step 1: Get signed upload URL from Convex
@@ -33,7 +33,7 @@ export function useFileUpload() {
           geojson: JSON.stringify(parsedRoute.geojson),
           distanceKm: parsedRoute.distanceKm,
           boundingBox: parsedRoute.boundingBox,
-          color: generateRouteColor(),
+          color: color || generateRouteColor(),
           routeType: routeType ?? "walk",
           startedAt: parsedRoute.startedAt,
           avgSpeedKmh: parsedRoute.avgSpeedKmh,

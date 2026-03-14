@@ -18,7 +18,7 @@ export interface ParsedRoute {
   avgSpeedKmh: number | undefined;
 }
 
-const ROUTE_COLORS = [
+export const ROUTE_COLORS = [
   "#e63946",
   "#457b9d",
   "#2a9d8f",

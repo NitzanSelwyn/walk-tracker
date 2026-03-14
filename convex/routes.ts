@@ -199,3 +199,16 @@ export const renameRoute = mutation({
     await ctx.db.patch(args.routeId, { name: args.name });
   },
 });
+
+export const updateRouteColor = mutation({
+  args: { routeId: v.id("routes"), color: v.string() },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throwAppError(ErrorCode.AUTH_NOT_AUTHENTICATED);
+
+    const route = await ctx.db.get(args.routeId);
+    if (!route || route.userId !== userId) throwAppError(ErrorCode.NOT_FOUND_ROUTE);
+
+    await ctx.db.patch(args.routeId, { color: args.color });
+  },
+});

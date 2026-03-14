@@ -166,6 +166,65 @@ export default function LoginPage() {
         </div>
       </section>
 
+      {/* ── Privacy ── */}
+      <section className="border-t border-stone-200/60 bg-white px-6 py-20 sm:py-24">
+        <div className="mx-auto max-w-4xl">
+          <div className="text-center">
+            <div className="mx-auto mb-6 flex h-12 w-12 items-center justify-center rounded-full bg-indigo-100">
+              <svg className="h-6 w-6 text-indigo-600" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
+              </svg>
+            </div>
+            <h2 className="font-display text-3xl text-stone-900 sm:text-4xl">
+              {t("landing.privacyTitle")}
+            </h2>
+            <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-stone-500 sm:text-lg">
+              {t("landing.privacySubtitle")}
+            </p>
+          </div>
+
+          <div className="mt-14 grid gap-6 sm:grid-cols-3">
+            {/* Privacy Zones */}
+            <div className="group rounded-xl border border-stone-100 bg-stone-50/50 p-6 transition-all hover:border-indigo-200 hover:bg-indigo-50/30">
+              <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-100 text-indigo-600 transition-colors group-hover:bg-indigo-200/70">
+                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
+                </svg>
+              </div>
+              <h3 className="text-sm font-semibold text-stone-800">{t("landing.privacyZones")}</h3>
+              <p className="mt-1.5 text-sm leading-relaxed text-stone-500">{t("landing.privacyZonesDesc")}</p>
+            </div>
+
+            {/* Auto-Trim */}
+            <div className="group rounded-xl border border-stone-100 bg-stone-50/50 p-6 transition-all hover:border-indigo-200 hover:bg-indigo-50/30">
+              <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-100 text-indigo-600 transition-colors group-hover:bg-indigo-200/70">
+                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M7.848 8.25l1.536.887M7.848 8.25a3 3 0 11-5.196-3 3 3 0 015.196 3zm1.536.887a2.165 2.165 0 011.083 1.839c.005.351.054.695.14 1.024M9.384 9.137l2.077 1.199M7.848 15.75l1.536-.887m-1.536.887a3 3 0 11-5.196 3 3 3 0 015.196-3zm1.536-.887a2.165 2.165 0 001.083-1.838c.005-.352.054-.696.14-1.025m-1.223 2.863l2.077-1.199m0-3.328a4.323 4.323 0 012.068-1.379l5.325-1.628a4.5 4.5 0 012.48-.044l.803.215-7.794 4.5m-2.882-1.664A4.331 4.331 0 0010.607 12m3.736 0l7.794 4.5-.802.215a4.5 4.5 0 01-2.48-.043l-5.326-1.629a4.324 4.324 0 01-2.068-1.379M14.343 12l-2.882 1.664" />
+                </svg>
+              </div>
+              <h3 className="text-sm font-semibold text-stone-800">{t("landing.privacyAutoTrim")}</h3>
+              <p className="mt-1.5 text-sm leading-relaxed text-stone-500">{t("landing.privacyAutoTrimDesc")}</p>
+            </div>
+
+            {/* Profile Visibility */}
+            <div className="group rounded-xl border border-stone-100 bg-stone-50/50 p-6 transition-all hover:border-indigo-200 hover:bg-indigo-50/30">
+              <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-100 text-indigo-600 transition-colors group-hover:bg-indigo-200/70">
+                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88" />
+                </svg>
+              </div>
+              <h3 className="text-sm font-semibold text-stone-800">{t("landing.privacyProfile")}</h3>
+              <p className="mt-1.5 text-sm leading-relaxed text-stone-500">{t("landing.privacyProfileDesc")}</p>
+            </div>
+          </div>
+
+          <p className="mt-8 text-center text-sm text-stone-400">
+            {t("landing.privacyCta")}
+          </p>
+        </div>
+      </section>
+
       {/* ── Export Guide ── */}
       <section className="border-t border-stone-200/60 bg-white px-6 py-20 sm:py-24">
         <div className="mx-auto max-w-4xl">

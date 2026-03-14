@@ -69,10 +69,10 @@ export default function MapPage() {
     parseFile(file);
   };
 
-  const handleSave = async (name: string, routeType: "walk" | "bike") => {
+  const handleSave = async (name: string, routeType: "walk" | "bike", color: string) => {
     if (!gpxFile || !parsedRoute) return;
     try {
-      await upload(gpxFile, parsedRoute, name, routeType);
+      await upload(gpxFile, parsedRoute, name, routeType, color);
       reset();
       setGpxFile(null);
     } catch {

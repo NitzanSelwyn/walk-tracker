@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import type { Id } from "../../../convex/_generated/dataModel";
 import { handleMutationError, showSuccessToast } from "../../lib/errorHandling";
+import ColorPicker from "./ColorPicker";
 
 interface Route {
   _id: Id<"routes">;
@@ -37,9 +38,12 @@ export default function RouteList({
   const { t } = useTranslation();
   const deleteRoute = useMutation(api.routes.deleteRoute);
   const renameRoute = useMutation(api.routes.renameRoute);
+  const updateRouteColor = useMutation(api.routes.updateRouteColor);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editName, setEditName] = useState("");
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [colorPickerId, setColorPickerId] = useState<string | null>(null);
+  const colorPickerRef = useRef<HTMLDivElement>(null);
 
   if (routes.length === 0) {
     return (
@@ -74,6 +78,28 @@ export default function RouteList({
     }
   };
 
+  const handleColorChange = async (routeId: Id<"routes">, color: string) => {
+    try {
+      await updateRouteColor({ routeId, color });
+      showSuccessToast(t("success.routeColorUpdated"));
+      setColorPickerId(null);
+    } catch (err) {
+      handleMutationError(err, t);
+    }
+  };
+
+  // Close color picker on outside click
+  useEffect(() => {
+    if (!colorPickerId) return;
+    const handleClick = (e: MouseEvent) => {
+      if (colorPickerRef.current && !colorPickerRef.current.contains(e.target as Node)) {
+        setColorPickerId(null);
+      }
+    };
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, [colorPickerId]);
+
   return (
     <div className="space-y-1.5">
       {routes.map((route) => (
@@ -83,11 +109,31 @@ export default function RouteList({
           className="group cursor-pointer rounded-lg border border-gray-100 bg-white p-2.5 transition-colors hover:border-gray-200"
         >
           <div className="flex items-center gap-2">
-            {/* Color swatch */}
-            <div
-              className="h-3 w-3 shrink-0 rounded-full ring-1 ring-black/10"
-              style={{ backgroundColor: route.color }}
-            />
+            {/* Color swatch (clickable) */}
+            <div className="relative shrink-0">
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setColorPickerId(colorPickerId === route._id ? null : route._id);
+                }}
+                className="h-3 w-3 rounded-full ring-1 ring-black/10 transition-transform hover:scale-125"
+                style={{ backgroundColor: route.color }}
+                title={t("map.chooseColor")}
+              />
+              {colorPickerId === route._id && (
+                <div
+                  ref={colorPickerRef}
+                  onClick={(e) => e.stopPropagation()}
+                  className="absolute start-0 top-5 z-10 rounded-lg border border-gray-200 bg-white p-2 shadow-lg"
+                >
+                  <ColorPicker
+                    value={route.color}
+                    onChange={(c) => handleColorChange(route._id, c)}
+                  />
+                </div>
+              )}
+            </div>
 
             {/* Name / Inline edit */}
             {editingId === route._id ? (
@@ -157,6 +203,15 @@ export default function RouteList({
             </div>
           ) : (
             <div className="mt-1.5 flex gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setColorPickerId(colorPickerId === route._id ? null : route._id);
+                }}
+                className="rounded px-2 py-0.5 text-xs text-gray-500 hover:bg-gray-100"
+              >
+                {t("map.color")}
+              </button>
               <button
                 onClick={(e) => {
                   e.stopPropagation();
