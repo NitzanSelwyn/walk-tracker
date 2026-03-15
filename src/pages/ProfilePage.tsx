@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from "convex/react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link } from "@tanstack/react-router";
 import { api } from "../../convex/_generated/api";
 import type { Id } from "../../convex/_generated/dataModel";
 import FollowButton from "../components/social/FollowButton";
@@ -10,7 +10,7 @@ import { handleMutationError, showSuccessToast } from "../lib/errorHandling";
 
 export default function ProfilePage() {
   const { t, i18n } = useTranslation();
-  const { userId: paramUserId } = useParams<{ userId: string }>();
+  const { userId: paramUserId } = useParams({ strict: false }) as { userId?: string };
 
   const currentUser = useQuery(api.users.currentUser);
   const targetUserId = paramUserId
@@ -236,7 +236,8 @@ export default function ProfilePage() {
         {(!isLimited || otherUser?.profile?.isMapPublic) && targetUserId && (
           <div className="mt-4 flex justify-center">
             <Link
-              to={`/profile/${targetUserId}/map`}
+              to="/profile/$userId/map"
+              params={{ userId: targetUserId! }}
               className="inline-flex items-center gap-1.5 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-700 transition-colors hover:bg-emerald-100"
             >
               <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">

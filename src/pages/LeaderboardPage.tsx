@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "convex/react";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
+import { Link } from "@tanstack/react-router";
 import { api } from "../../convex/_generated/api";
 import type { Id } from "../../convex/_generated/dataModel";
 import AreaPicker from "../components/coverage/AreaPicker";
@@ -71,7 +71,7 @@ export default function LeaderboardPage() {
                 </span>
 
                 {/* Avatar */}
-                <Link to={`/profile/${entry.userId}`} className="shrink-0">
+                <Link to="/profile/$userId" params={{ userId: entry.userId }} className="shrink-0">
                   {entry.user?.image ? (
                     <img
                       src={entry.user.image}
@@ -87,7 +87,7 @@ export default function LeaderboardPage() {
 
                 {/* Name */}
                 <Link
-                  to={`/profile/${entry.userId}`}
+                  to="/profile/$userId" params={{ userId: entry.userId }}
                   className="flex-1 truncate text-sm font-medium text-gray-800 hover:text-emerald-700"
                 >
                   {displayName}

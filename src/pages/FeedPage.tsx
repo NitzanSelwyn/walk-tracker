@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "convex/react";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
+import { Link } from "@tanstack/react-router";
 import { api } from "../../convex/_generated/api";
 
 export default function FeedPage() {
@@ -107,7 +107,7 @@ function ActivityCard({
     <div className="rounded-lg border border-gray-200 bg-white p-4 transition-colors hover:border-gray-300">
       <div className="flex items-start gap-3">
         {/* Avatar */}
-        <Link to={`/profile/${user?._id}`} className="shrink-0">
+        <Link to="/profile/$userId" params={{ userId: user?._id ?? "" }} className="shrink-0">
           {user?.image ? (
             <img
               src={user.image}
@@ -125,7 +125,7 @@ function ActivityCard({
         <div className="flex-1 min-w-0">
           <p className="text-sm text-gray-800">
             <Link
-              to={`/profile/${user?._id}`}
+              to="/profile/$userId" params={{ userId: user?._id ?? "" }}
               className="font-semibold text-gray-900 hover:text-emerald-700"
             >
               {displayName}

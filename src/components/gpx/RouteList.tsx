@@ -45,6 +45,18 @@ export default function RouteList({
   const [colorPickerId, setColorPickerId] = useState<string | null>(null);
   const colorPickerRef = useRef<HTMLDivElement>(null);
 
+  // Close color picker on outside click
+  useEffect(() => {
+    if (!colorPickerId) return;
+    const handleClick = (e: MouseEvent) => {
+      if (colorPickerRef.current && !colorPickerRef.current.contains(e.target as Node)) {
+        setColorPickerId(null);
+      }
+    };
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, [colorPickerId]);
+
   if (routes.length === 0) {
     return (
       <p className="py-4 text-center text-sm text-gray-400">
@@ -87,18 +99,6 @@ export default function RouteList({
       handleMutationError(err, t);
     }
   };
-
-  // Close color picker on outside click
-  useEffect(() => {
-    if (!colorPickerId) return;
-    const handleClick = (e: MouseEvent) => {
-      if (colorPickerRef.current && !colorPickerRef.current.contains(e.target as Node)) {
-        setColorPickerId(null);
-      }
-    };
-    document.addEventListener("mousedown", handleClick);
-    return () => document.removeEventListener("mousedown", handleClick);
-  }, [colorPickerId]);
 
   return (
     <div className="space-y-1.5">

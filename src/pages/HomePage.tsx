@@ -1,6 +1,6 @@
 import { useQuery, useMutation } from "convex/react";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
+import { Link } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { api } from "../../convex/_generated/api";
 

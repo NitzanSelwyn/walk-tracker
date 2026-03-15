@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "convex/react";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
+import { Link } from "@tanstack/react-router";
 import { api } from "../../convex/_generated/api";
 import type { Id } from "../../convex/_generated/dataModel";
 import type { LatLngBoundsExpression } from "leaflet";
@@ -110,7 +110,7 @@ export default function CommunityPage() {
                       {stats.topContributors.map((contributor, i) => (
                         <Link
                           key={contributor.userId}
-                          to={`/profile/${contributor.userId}`}
+                          to="/profile/$userId" params={{ userId: contributor.userId }}
                           className="flex items-center gap-3 rounded-lg p-2 transition-colors hover:bg-gray-50"
                         >
                           <span className="w-5 text-center text-xs font-bold text-emerald-600">

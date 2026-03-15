@@ -1,7 +1,7 @@
 import { useQuery, useMutation } from "convex/react";
 import { useTranslation } from "react-i18next";
 import { useState, useRef, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "@tanstack/react-router";
 import { api } from "../../../convex/_generated/api";
 import type { Id } from "../../../convex/_generated/dataModel";
 import { handleMutationError, showSuccessToast } from "../../lib/errorHandling";
@@ -112,7 +112,7 @@ export default function NotificationBell() {
                 >
                   <div className="flex items-start gap-3">
                     {n.senderId ? (
-                      <Link to={`/profile/${n.senderId}`} className="shrink-0 cursor-pointer">
+                      <Link to="/profile/$userId" params={{ userId: n.senderId! }} className="shrink-0 cursor-pointer">
                         {n.sender?.image ? (
                           <img
                             src={n.sender.image}

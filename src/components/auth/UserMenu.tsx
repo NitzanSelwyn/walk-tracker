@@ -2,7 +2,7 @@ import { useQuery } from "convex/react";
 import { useAuthActions } from "@convex-dev/auth/react";
 import { useTranslation } from "react-i18next";
 import { useState, useRef, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "@tanstack/react-router";
 import { api } from "../../../convex/_generated/api";
 
 export default function UserMenu() {

@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect } from "react";
 import { useQuery } from "convex/react";
 import { useTranslation } from "react-i18next";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link } from "@tanstack/react-router";
 import { api } from "../../convex/_generated/api";
 import type { Id } from "../../convex/_generated/dataModel";
 import MapContainer from "../components/map/MapContainer";
@@ -11,7 +11,7 @@ import type { LatLngBoundsExpression } from "leaflet";
 
 export default function UserMapPage() {
   const { t } = useTranslation();
-  const { userId } = useParams<{ userId: string }>();
+  const { userId } = useParams({ strict: false }) as { userId: string };
   const targetUserId = userId as Id<"users">;
 
   const currentUser = useQuery(api.users.currentUser);
@@ -112,7 +112,7 @@ export default function UserMapPage() {
           </div>
         </div>
         <Link
-          to={`/profile/${userId}`}
+          to="/profile/$userId" params={{ userId }}
           className="text-sm text-emerald-600 hover:text-emerald-700 hover:underline"
         >
           &larr; {t("profile.title")}
@@ -132,7 +132,7 @@ export default function UserMapPage() {
           <div className="flex items-center justify-between border-b border-gray-100 px-4 py-3">
             <div className="flex items-center gap-2">
               <Link
-                to={`/profile/${userId}`}
+                to="/profile/$userId" params={{ userId }}
                 className="text-gray-400 transition-colors hover:text-gray-600"
                 title={t("profile.title")}
               >
